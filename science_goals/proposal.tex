@@ -1,0 +1,163 @@
+\documentclass[letterpaper,11pt,preprint]{hack_aastex}
+
+\input{dfm_stylez}
+\pagestyle{myheadings}
+\markright{\textsf{\footnotesize %
+                   LSST / %
+		   Ruth Angus }}
+
+% Single-spacing.
+\def\baselinestretch{1.0}
+
+\begin{document}
+
+\title{Maximizing Science in the LSST era: stellar rotation and
+gyrochronology}
+
+\section*{Stellar ages}
+Ages are notoriously difficult to infer because stars vary little in brightness
+or temperature during their hydrogen-burning lifetimes and fitting stellar
+evolution models to these two observables usually produces age estimates with
+uncertainties in the order of 50-150\%.
+However, gyrochronology, the method of inferring an age from mass (or
+suitable proxy, e.g. effective temperature) and rotation period has the
+potential to provide precise and accurate ages for stars observed by precise
+photometric surveys such as LSST.
+
+Cool stars spin down predictably over their main sequence lifetime due
+to magnetic braking and their ages depend on their masses and current rotation
+periods \citep[e.g.][]{skumanich, kawaler, barnes}, with metallicity also
+having a minor influence.
+Observations of young cluster stars show a tight relation between rotation
+period and age, \citep{meibom} however until recently the behavior of old
+stars was unknown due to a dearth of precise ages for field stars.
+Recently, the relatively old \Kepler\ asteroseismic targets were precisely
+characterized and these stars seem to tell a different story: they
+rotate more rapidly than expected given their age and mass \citep{angus}.
+This finding provoked the response of \citet{vansaders} who attribute this
+behaviour to an evolving magnetic dynamo.
+It is clear that our understanding of the physics driving gyrochronology is
+incomplete and this is due to the sparcity of the available data: rotation
+periods have been measured for only a handful of relatively young clusters
+and fewer than 30 suitable asteroseismic stars.
+In order to improve the gyrochronology relations we must expand this data set
+and, in particular, it is essential that we measure long rotation periods for
+old stars.
+LSST will provide precision photometry at appropriate cadences for
+measuring the rotation periods of intermediate to slowly rotating stars.
+Some of these will be in the halo; since the ages of halo stars are known
+to be 10-12 Gyr \citep[e.g.][]{jofre}, their rotation periods will enable us
+to calibrate gyrochronology at the old end and to quantify the level of
+dispersion in the relation between rotation period and age.
+
+LSST will provide rotation periods for thousands of stars.
+In order use these targets to improve the gyrochronology relations, effective
+temperatures, metallicities and isochronal ages must be inferred for a subset
+of this sample.
+Once these parameters have be established for such a `training set', we can
+develop a model to assign ages to the remaining ensemble, using the
+information available from the survey.
+
+% \ssfigure{../../code/gyro_plot.png}{0.4}{%
+% The age-rotation (gyrochronology) relation for Solar-mass stars.
+% The blue points show the mean rotation periods of clusters Coma Berenices,
+% Praesepe, Hyades, NGC6811 and NGC6819 from left to right.
+% The black points are local field stars with asteroseismic ages and photometric
+% rotation periods, 18 Sco (left) and $\alpha$ Cen A (right) and the pink
+% point is the Sun.
+% This figure demonstrates how a rotation period
+% % and mass, or mass proxy
+% can be used to predict stellar age.
+% \label{fig:gyro}}
+
+\begin{multicols}{2}
+{\centering\bf REFERENCES\par}
+\vspace{0.2em}
+\begin{thebibliography}{}%
+\raggedright\raggedbottom\scriptsize\setlength{\parskip}{-0.5em}%
+
+\bibitem[Angus \etal(2015)]{angus}
+Angus, R., Aigrain, S., Foreman-Mackey, D., McQuillan., A., 2015,
+
+% MNRAS, 450, 1787
+% \bibitem[Angus, Aigrain \& Foreman-Mackey(in press)]{AngusIAU}
+% Angus, R. Aigrain, S. \& Foreman-Mackey, D., Conference proceedings of
+% the International Astronomical Union XXIX, 2015
+% \bibitem[Angus \etal(ApJ submitted)]{sip}
+% Angus, R., Foreman-Mackey, D. \& Johnson, J., Submitted to ApJ
+% \bibitem[Angus \& Kipping(ApJ submitted)]{flicker}
+% Angus, R. \& Kipping, D., Submitted to ApJ
+% \bibitem[\protect\citeauthoryear{Bastien \etal}{2013}]{bastien}
+% Bastien, F. A., Stassun, K. G., Basri, G. \& Pepper, J., 2013, Nature, 500, 427
+
+\bibitem[Barnes(2003)]{barnes}
+Barnes, S.~A., 1972, ApJ, 586, 464
+
+% \bibitem[Ballard \& Johnson(2014)]{ballard}
+% Ballard, S., \& Johnson, J. A. 2014, arXiv:1410.4192
+% \bibitem[Borucki \etal(2010)]{kepler}
+% Borucki, W.~J., Koch, D., Basri, G. \etal, 2010, Science, 327, 977
+% \bibitem[Burke \etal(2015)]{burke}
+% Burke, C.~J., Christiansen, J.~L., Mullaly, F. \etal, 2015, ApJ, 809, 8B
+% \bibitem[Davies \etal(2014)]{davies}
+% Davies, M.~B., Adams, F.~C., Armitage, P., \etal, 2014,
+% Protostars and Planets VI, 787
+% \bibitem[Dressing \& Charbonneau(2015)]{dressing}
+% Dressing, C.~D. \& Charbonneau, D., 2015, \apj, 807, 45
+% \bibitem[Epstein \& Pinsonneault(2013)]{epstein}
+% Epstein, C.~R., \& Pinsonneault, M.~H., 2013, ApJ, 780, 159
+% \bibitem[Fang \& Margot(2013)]{fang}
+% Fang, J., \& Margot, J.~L. 2013, ApJ, 767, 115
+% \bibitem[Foreman-Mackey \etal(2015)]{foreman-mackey}
+% Foreman-Mackey, D., Hogg, D. \& Morton, T., D., 2015, \apj, 975, 64
+% \bibitem[Funk \etal(2010)]{funk}
+% Funk, B., \etal, 2010, A\&A, 516, A82
+% \bibitem[Howard \etal(2012)]{howard}
+% Howard, A.~W., Marcy, G.~W., Bryson, S.~T. \etal, 2012, \apj, 201, 15
+% \bibitem[Howell \etal(2014)]{k2}
+% Howell, S.~B., \etal\ 2014, \pasp, 126, 398
+% \bibitem[Johansen \etal(2012)]{johansen}
+% Johansen, A., Davies, M.~B., Church, R.~P., \& Holmelin, V. 2012, ApJ, 758, 39
+
+\bibitem[Jofr{\'e} \& Weiss(2011)]{jofre}
+Jofr{\'e}, P., \& Weiss, A.\ 2011, \aap, 533, A59
+\bibitem[Kawaler(1988)]{kawaler}
+Kawaler, S.~D., 1972, ApJ, 333, 236
+\bibitem[Meibom et al.(2015)]{meibom}
+Meibom, S., Barnes, S.~A., Platais, I., et al.\ 2015, \nat, 517, 589
+
+% \bibitem[Lissauer, \etal(2011)]{lissauer}
+% Lissauer, J.~J., Fabrycky, D.~C., Ford, E.~B., \etal, 2011, Nature, 470, 53
+% \bibitem[McQuillan \etal(2014)]{mcquillan2014}
+% McQuillan, A., Mazeh, T. \& Aigrain, S., ApJ, 211, 24
+% \bibitem[Morton \& Winn(2014)]{morton}
+% Morton, T.~D. \& Winn, J.~N., 2014, ApJ, 796, 47
+% \bibitem[Petigura \etal(2013)]{petigura}
+% Petigura, E.~A., Howard, A.~W. \& Marcy, G.~W., 2013, PNAS, 110, 19273
+% \bibitem[Petrovich(2014)]{petrovich}
+% Petrovich, C., 2014, ApJ, 799, 27
+% \bibitem[Ricker \etal(2014)]{tess}
+% Ricker, G.~R., \etal, 2014, SPIE JATIS, 3
+% \bibitem[Shara \etal(2014)]{shara}
+% Shara, M.~M., Hurley, J.~R., Mardling, R.~A., 2014, arXiv:1411.7061v1
+% [astro-ph.EP]
+
+\bibitem[Skumanich(1972)]{skumanich}
+Skumanich, A., 1972, ApJ, 171, 565
+% \bibitem[Smith \& Lissauer(2009)]{smith}
+% Smith, A.~W. \& Lissauer, J.~J., 2009, Icarus, 201, 381
+\bibitem[van Saders \etal(2015)]{vansaders}
+van Saders \etal, 2015, Nature (in press)
+
+% \bibitem[Veras \etal(2015)]{veras}
+% Veras, D., Brown, D.~J.~A., Mustill, A.~J. \& Pollacco, D., 2015, MNRAS, 453,
+% 67
+% \bibitem[Walkowicz \& Basri(2014)]{walk}
+% Walkowicz, L.~M. \& Basri, G.~S., 2014, MNRAS, 436, 1883
+% \bibitem[Winn \& Fabrycky(2015)]{winn}
+% Winn, J.~N. \& Fabrycky, D.~C., 2015 A\&A, 53, 409
+% \bibitem[Zhou \etal(2007)]{zhou}
+% Zhou, J.~L., Lin, D.~N. C., \& Sun, Y.~S. 2007, ApJ, 666, 423
+\end{thebibliography}
+\end{multicols}
+\end{document}
