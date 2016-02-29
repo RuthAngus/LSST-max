@@ -17,9 +17,8 @@ def simulate_LSST(id, p, a, path, tmin=3, tmax=30, dur=10, noise=10.):
     id = str(int(id)).zfill(4)
 
     # The time array
-    x = np.cumsum(np.random.uniform(tmin, tmax, 1000) * 24 * 3600)
-    m = x < dur * 365.25 * 24 * 3600
-    x = x[m]  # cut off at 10 yrs
+    x = np.cumsum(np.random.uniform(tmin, tmax, 1000))
+    x = x[x < dur * 365.25]  # cut off at 10 yrs
 
     # The flux array (for now just use a sinusoid)
     y = (float(a)/1e6) * np.sin(2*np.pi*(1./p)*x) \
@@ -32,11 +31,11 @@ def simulate_LSST(id, p, a, path, tmin=3, tmax=30, dur=10, noise=10.):
     np.savetxt("{0}/{1}.txt".format(path, id), data.T)
 
     plt.clf()
-    plt.plot(xs/24/3600/365.25, ys, "r")
-    plt.errorbar(x/24/3600/365.25, y, yerr=yerr, fmt="k.", capsize=0)
+    plt.plot(xs/365.25, ys, "r")
+    plt.errorbar(x/365.25, y, yerr=yerr, fmt="k.", capsize=0)
     plt.xlabel("Time (years)")
     plt.ylabel("Normalised flux")
-    plt.title("period = {0:.2f} days, amp = {1:.2f} ppm".format(p/24/3600, a))
+    plt.title("period = {0:.2f} days, amp = {1:.2f} ppm".format(p, a))
     plt.subplots_adjust(left=.2)
     plt.savefig("simulations/{0}".format(id))
 
@@ -47,4 +46,4 @@ if __name__ == "__main__":
     N = 10
     ps = np.exp(np.random.uniform(np.log(10), np.log(300), N))
     amps = np.random.uniform(10, 300, N)  # ppm
-    [simulate_LSST(i, ps[i] * 24 * 3600, amps[i], path) for i in range(N)]
+    [simulate_LSST(i, ps[i], amps[i], path) for i in range(N)]
