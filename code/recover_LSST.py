@@ -9,11 +9,12 @@ from gatspy.periodic import LombScargle
 import sys
 import multiprocessing as mp
 from multiprocessing import Pool
-from GProtation import make_plot, lnprob
+from GProtation import make_plot, lnprob, neglnlike
 import emcee
 import time
 import george
 from george.kernels import ExpSquaredKernel, ExpSine2Kernel
+import scipy.optimize as spo
 
 def periodograms(id, x, y, yerr, path, plot=False, savepgram=False):
     """
@@ -72,15 +73,28 @@ def recover_injections(id, x, y, yerr, path, burnin, run, nwalkers=32,
             p_init = 1.
 
     # Set limits on prior
-    plims = np.log([p_init - .4 * p_init, p_init + .4 * p_init])
+#     plims = np.log([p_init - .4 * p_init, p_init + .4 * p_init])
+    plims = np.log([p_init - .01 * p_init, p_init + .01 * p_init])
 
     print("Initial period and limits:", p_init, np.exp(plims))
 
     # assign theta_init
-    theta_init = [np.exp(-5), np.exp(7), np.exp(.6), np.exp(-16), p_init]
-    theta_init = np.log(theta_init)
+    theta_init = np.log([np.exp(-5), np.exp(7), np.exp(.6), np.exp(-16),
+                         p_init])
     print("\n", "log(theta_init) = ", theta_init)
     print("theta_init = ", np.exp(theta_init), "\n")
+
+    # plot initialisation
+    t = np.exp(theta_init)
+    k = t[0] * ExpSquaredKernel(t[1]) * ExpSine2Kernel(t[2], t[3])
+    gp = george.GP(k)
+    gp.compute(x, yerr)
+    xs = np.linspace(x[0], x[-1], 1000)
+    mu, cov = gp.predict(y, xs)
+    plt.clf()
+    plt.errorbar(x, y, yerr=yerr, **reb)
+    plt.plot(xs, mu, color=cols.blue)
+    plt.savefig("{0}/{1}_init".format(path, id))
 
     # set up MCMC
     ndim, nwalkers = len(theta_init), nwalkers
@@ -131,8 +145,8 @@ def acf_pgram_GP_LSST(id):
     x, y, yerr = np.genfromtxt("simulations/{0}.txt".format(id)).T
 
     periodograms(id, x, y, yerr, path, plot=True)  # pgram
-    burnin, run = 50, 1000
-    recover_injections(id, x, y, yerr, path, burnin, run, nwalkers=32,
+    burnin, run = 500, 10000
+    recover_injections(id, x, y, yerr, path, burnin, run, nwalkers=24,
                        plot=True)
 
 if __name__ == "__main__":
