@@ -24,7 +24,8 @@ def periodograms(id, x, y, yerr, path, plot=False, savepgram=False):
     x, y, yerr: time, flux and error arrays.
     path: path where you want to save the output.
     """
-    ps = np.linspace(5, 300, 1000)
+#     ps = np.linspace(5, 300, 1000)
+    ps = np.linspace(20, 25, 1000)
     model = LombScargle().fit(x, y, yerr)
     pgram = model.periodogram(ps)
 
@@ -74,7 +75,7 @@ def recover_injections(id, x, y, yerr, path, burnin, run, nwalkers=32,
 
     # Set limits on prior
 #     plims = np.log([p_init - .4 * p_init, p_init + .4 * p_init])
-    plims = np.log([p_init - .01 * p_init, p_init + .01 * p_init])
+    plims = np.log([p_init - .1 * p_init, p_init + .1 * p_init])
 
     print("Initial period and limits:", p_init, np.exp(plims))
 
@@ -145,13 +146,13 @@ def acf_pgram_GP_LSST(id):
     x, y, yerr = np.genfromtxt("simulations/{0}.txt".format(id)).T
 
     periodograms(id, x, y, yerr, path, plot=True)  # pgram
-    burnin, run = 500, 10000
+    burnin, run = 50, 1000
     recover_injections(id, x, y, yerr, path, burnin, run, nwalkers=24,
                        plot=True)
 
 if __name__ == "__main__":
 
-    acf_pgram_GP_LSST(0)
+    acf_pgram_GP_LSST(1)
 
 #     ids = range(10)
 #     pool = Pool()
