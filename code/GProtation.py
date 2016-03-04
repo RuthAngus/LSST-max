@@ -30,6 +30,19 @@ def lnprior(theta, plims):
     return -np.inf
 
 
+def Gprior(theta, plims):
+    """
+    plims is an array containing the log(mean) and log(standard
+    dev) of the Gaussian over period.
+    theta = A, l, Gamma, s, P
+    """
+    theta[4], plims = np.exp(theta[4]), np.exp(plims)
+    if -20 < theta[0] < 20 and theta[4] < theta[1] and -20 < theta[2] < 20 \
+    and -20 < theta[3] < 20 and plims[0] < theta[4] < plims[1]:
+        return -.5 * ((theta[4] - plims[0])/plims[1])**2  # Gaussian over p
+    return -np.inf
+
+
 def Glnprior(theta, plims):
     """
     plims is a tuple, list or array containing the lower and upper limits for
@@ -44,6 +57,9 @@ def Glnprior(theta, plims):
 # lnprob
 def lnprob(theta, x, y, yerr, plims):
     return lnlike(theta, x, y, yerr) + lnprior(theta, plims)
+
+def Gprob(theta, x, y, yerr, plims):
+    return lnlike(theta, x, y, yerr) + Gprior(theta, plims)
 
 # lnlike
 def lnlike(theta, x, y, yerr):
