@@ -36,10 +36,10 @@ def Gprior(theta, plims):
     dev) of the Gaussian over period.
     theta = A, l, Gamma, s, P
     """
-    theta[4], plims = np.exp(theta[4]), np.exp(plims)
-    if -20 < theta[0] < 20 and theta[4] < theta[1] and -20 < theta[2] < 20 \
-    and -20 < theta[3] < 20 and plims[0] < theta[4] < plims[1]:
-        return -.5 * ((theta[4] - plims[0])/plims[1])**2  # Gaussian over p
+    p = np.exp(theta[4])
+    mu, sig = np.exp(plims)
+    if -20 < theta[0] < 20 and -20 < theta[2] < 20 and -20 < theta[3] < 20:
+        return -.5*(p - mu)**2/sig**2  # Gaussian over p
     return -np.inf
 
 
