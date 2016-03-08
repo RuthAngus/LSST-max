@@ -20,11 +20,10 @@ def simulate_LSST(id, p, a, path, tmin=3, tmax=30, dur=10, noise=10.):
     id = str(int(id)).zfill(4)
 
     # The time array
-    x = np.cumsum(np.random.uniform(tmin, tmax, 1000))
-    x = x[x < dur * 365.25]
+#     x = np.cumsum(np.random.uniform(tmin, tmax, 1000))
+#     x = x[x < dur * 365.25]
     x = generate_visits()
     x += -x[0]
-    assert 0
 
     np.random.seed(1234)
     res0, res1 = mklc.mklc(x, p=p)
@@ -49,7 +48,7 @@ if __name__ == "__main__":
 
     # Arrays of random (log-normal) periods and (uniform) amplitudes.
     N = 10
-    ps = np.exp(np.random.uniform(np.log(10), np.log(300), N))
+    ps = np.exp(np.random.uniform(np.log(2), np.log(100), N))
     amps = np.random.uniform(10, 300, N)  # ppm
     [simulate_LSST(i, ps[i], amps[i], path) for i in range(N)]
 
