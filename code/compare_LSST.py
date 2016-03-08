@@ -4,7 +4,7 @@ import matplotlib.pyplot as plt
 import h5py
 import os
 
-def compare_acf(true_periods, ids, path):  # path is where results are saved
+def compare_pgram(true_periods, ids, path):  # path is where results are saved
 
     # load recovered
     recovered_periods = np.zeros_like(ids)
@@ -12,15 +12,14 @@ def compare_acf(true_periods, ids, path):  # path is where results are saved
     for i in range(len(ids)):
         id = str(int(ids[i])).zfill(4)
         recovered_periods[i], errs[i] = \
-                np.genfromtxt("{0}/{1}_acfresult.txt".format(path, id)).T
+                np.genfromtxt("{0}/{1}_pgram_result.txt".format(path, id)).T
 
     plt.clf()
-    recovered_periods[recovered_periods==-9999] = 0
     plt.plot(true_periods, recovered_periods, "k.")
-    plt.ylim(0, 80)
+#     plt.ylim(0, 80)
     xs = np.linspace(min(true_periods), max(true_periods), 100)
     plt.plot(xs, xs, "r--")
-    plt.savefig("acf_compare_{0}".format(path))
+    plt.savefig("pgram_compare".format(path))
 
 def compare_GP(true_periods, ids, path):
 
@@ -47,17 +46,13 @@ def compare_GP(true_periods, ids, path):
     plt.ylim(0, 80)
     xs = np.linspace(min(true_periods), max(true_periods), 100)
     plt.plot(xs, xs, "r--")
-    plt.savefig("GP_compare_{0}".format(path))
+    plt.savefig("GP_compare".format(path))
 
 if __name__ == "__main__":
 
-    # Load Suzanne's noise-free simulations
-    data = np.genfromtxt("../par/final_table.txt", skip_header=1).T
-    m = data[13] == 0  # just the stars without diffrot
-    ids = data[0][m]
-    true_periods = data[-3][m]
+    # Load truths
+    ids, true_periods, amps = np.genfromtxt("simulations/truth.txt",
+                                            skip_header=1).T
 
-#     compare_acf(true_periods, ids, "noise-free")
-#     compare_acf(true_periods, ids, "noisy")
-#     compare_GP(true_periods, ids, "noise-free")
-    compare_GP(true_periods, ids, "noisy")
+    compare_pgram(true_periods, ids, "results")
+    compare_GP(true_periods, ids, "results")
