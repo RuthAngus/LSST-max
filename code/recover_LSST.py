@@ -24,8 +24,7 @@ def periodograms(id, x, y, yerr, path, plot=False, savepgram=False):
     x, y, yerr: time, flux and error arrays.
     path: path where you want to save the output.
     """
-#     ps = np.linspace(5, 300, 1000)
-    ps = np.linspace(20, 25, 1000)
+    ps = np.linspace(5, 300, 1000)
     model = LombScargle().fit(x, y, yerr)
     pgram = model.periodogram(ps)
 
@@ -75,8 +74,8 @@ def recover_injections(id, x, y, yerr, path, burnin, run, nwalkers=32,
 
     # If using lnprob, plims = [pmin, pmax] for a uniform prior.
     # If using Gprob, plims = [mu, sigma] for a Gaussian prior.
-#     plims = np.log([p_init - .1 * p_init, p_init + .1 * p_init])
-    plims = np.log([p_init, p_init*.1])  # mean, sigma
+    plims = np.log([p_init - .5 * p_init, p_init + 2 * p_init])
+#     plims = np.log([p_init, p_init*.1])  # mean, sigma
 
     print("Initial period and limits:", p_init, np.exp(plims))
 
@@ -105,8 +104,8 @@ def recover_injections(id, x, y, yerr, path, burnin, run, nwalkers=32,
 
     # time the lhf call
     start = time.time()
-#     print("lnprob = ", lnprob(theta_init, x, y, yerr, plims))
-    print("lnprob = ", Gprob(theta_init, x, y, yerr, plims))
+    print("lnprob = ", lnprob(theta_init, x, y, yerr, plims))
+#     print("lnprob = ", Gprob(theta_init, x, y, yerr, plims))
     end = time.time()
     tm = end - start
     print("1 lhf call takes ", tm, "seconds")
@@ -116,8 +115,8 @@ def recover_injections(id, x, y, yerr, path, burnin, run, nwalkers=32,
           "mins,", (tm*nwalkers*run + tm*nwalkers*burnin)/3600, "hours")
 
     # run MCMC
-#     sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=args)
-    sampler = emcee.EnsembleSampler(nwalkers, ndim, Gprob, args=args)
+    sampler = emcee.EnsembleSampler(nwalkers, ndim, lnprob, args=args)
+#     sampler = emcee.EnsembleSampler(nwalkers, ndim, Gprob, args=args)
     print("burning in...")
     start = time.time()
     p0, lp, state = sampler.run_mcmc(p0, burnin)
@@ -150,14 +149,14 @@ def acf_pgram_GP_LSST(id):
     yerr = np.ones_like(x) * .001
 
     periodograms(id, x, y, yerr, path, plot=True)  # pgram
-    burnin, run = 500, 1000
-    recover_injections(id, x, y, yerr, path, burnin, run, nwalkers=24,
-                       plot=True)
+#     burnin, run = 500, 1000
+#     recover_injections(id, x, y, yerr, path, burnin, run, nwalkers=24,
+#                        plot=True)
 
 if __name__ == "__main__":
 
-    acf_pgram_GP_LSST(0)
+#     acf_pgram_GP_LSST(0)
 
-#     ids = range(10)
-#     pool = Pool()
-#     pool.map(acf_pgram_GP_LSST, ids)
+    ids = range(10)
+    pool = Pool()
+    pool.map(acf_pgram_GP_LSST, ids)
