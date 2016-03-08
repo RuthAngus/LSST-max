@@ -5,70 +5,71 @@
 \markright{\textsf{\footnotesize %
                    LSST / %
 		   Ruth Angus }}
+\author{Ruth Angus, University of Oxford, UK}
 
 % Single-spacing.
 \def\baselinestretch{1.0}
 
 \begin{document}
 
-\title{Maximizing Science in the LSST era: stellar rotation and
+\title{Maximizing Science in the Era of LSST: stellar rotation and
 gyrochronology}
 
-\section*{Stellar ages}
-Ages are notoriously difficult to infer because stars vary little in brightness
-or temperature during their hydrogen-burning lifetimes and fitting stellar
-evolution models to these two observables usually produces age estimates with
-uncertainties in the order of 50-150\%.
-However, gyrochronology, the method of inferring an age from mass (or
-suitable proxy, e.g. effective temperature) and rotation period has the
-potential to provide precise and accurate ages for stars observed by precise
-photometric surveys such as LSST.
+The ages of main sequence stars are notoriously difficult to infer because
+stars vary little in brightness
+or temperature during their hydrogen-burning lifetimes and isochronal ages
+can therefore be very imprecise.
+Gyrochronology, the method of inferring an age from mass (or suitable
+proxy, e.g.\ effective temperature) and rotation period has the
+potential to provide ages for stars observed by precise photometric surveys
+such as LSST, however it still suffers from being poorly calibrated at late
+ages.
+LSST will provide observations of thousands of old stars, ideal for
+calibrating gyrochronology and it is important that these targets are
+characterised.
+In particular, their effective temperatures and surface gravities must be
+constrained.
+Ideally, spectra of a suitable subset of these stars should be obtained and
+used to train a model that can convert LSST colours to effective temperatures
+and surface gravities for a larger ensemble of targets.
 
+\section*{Scientific Background}
 Cool stars spin down predictably over their main sequence lifetime due
 to magnetic braking and their ages depend on their masses and current rotation
 periods \citep[e.g.][]{skumanich, kawaler, barnes}, with metallicity also
 having a minor influence.
 Observations of young cluster stars show a tight relation between rotation
 period and age, \citep{meibom} however until recently the behavior of old
-stars was unknown due to a dearth of precise ages for field stars.
+stars was unknown due to a dearth of precise ages.
 Recently, the relatively old \Kepler\ asteroseismic targets were precisely
-characterized and these stars seem to tell a different story: they
-rotate more rapidly than expected given their age and mass \citep{angus}.
-This finding provoked the response of \citet{vansaders} who attribute this
-behaviour to an evolving magnetic dynamo.
-It is clear that our understanding of the physics driving gyrochronology is
-incomplete and this is due to the sparcity of the available data: rotation
-periods have been measured for only a handful of relatively young clusters
-and fewer than 30 suitable asteroseismic stars.
-In order to improve the gyrochronology relations we must expand this data set
-and, in particular, it is essential that we measure long rotation periods for
-old stars.
+characterized.
+These stars tell a different story: they rotate more rapidly than
+expected given their age and mass \citep{angus}.
+Although \citet{vansaders} are able to explain this behaviour by including an
+evolving magnetic dynamo in their models, it is clear that our understanding
+of the physics driving gyrochronology is still incomplete.
+This is due to the sparcity of the available data: rotation periods have been
+measured for only a handful of relatively young clusters and fewer than 30
+suitable asteroseismic stars.
+In order to improve the gyrochronology relations we must expand this data set,
+particularly towards slowly rotating, old stars.
 LSST will provide precision photometry at appropriate cadences for
 measuring the rotation periods of intermediate to slowly rotating stars.
-Some of these will be in the halo; since the ages of halo stars are known
-to be 10-12 Gyr \citep[e.g.][]{jofre}, their rotation periods will enable us
-to calibrate gyrochronology at the old end and to quantify the level of
-dispersion in the relation between rotation period and age.
+Some of these will be in the halo.
+Since the ages of halo stars are known to be 10-12 Gyr \citep[e.g.][]{jofre},
+their rotation periods will be particularly useful for calibrating
+gyrochronology at the old end and quantifying the level of dispersion in the
+relation between rotation period and age.
 
-LSST will provide rotation periods for thousands of stars.
-In order use these targets to improve the gyrochronology relations, effective
-temperatures, metallicities and isochronal ages must be inferred for a subset
-of this sample.
-Once these parameters have be established for such a `training set', we can
-develop a model to assign ages to the remaining ensemble, using the
-information available from the survey.
-
-% \ssfigure{../../code/gyro_plot.png}{0.4}{%
-% The age-rotation (gyrochronology) relation for Solar-mass stars.
-% The blue points show the mean rotation periods of clusters Coma Berenices,
-% Praesepe, Hyades, NGC6811 and NGC6819 from left to right.
-% The black points are local field stars with asteroseismic ages and photometric
-% rotation periods, 18 Sco (left) and $\alpha$ Cen A (right) and the pink
-% point is the Sun.
-% This figure demonstrates how a rotation period
-% % and mass, or mass proxy
-% can be used to predict stellar age.
-% \label{fig:gyro}}
+In order to perform this calibration, spectroscopic effective temperatures and
+surface gravities must be inferred for a subset of this sample.
+Once temperature and log $g$ has been measured from the spectra of such a
+`training set', we will be able to develop a model that converts LSST
+observables to temperatures and log $g$s for the remainder of the survey's
+targets stars.
+We therefore need to outline the requirements for spectroscopic survey that is
+large enough to adequately train a model for the characterisation of the
+remaining LSST targets.
 
 \begin{multicols}{2}
 {\centering\bf REFERENCES\par}
