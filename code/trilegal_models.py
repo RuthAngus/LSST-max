@@ -25,8 +25,8 @@ def random_stars(fname, N):
 
     # convert to B-V and get rid of hot stars
     bv, bverr = gr_to_bv(g, r)
-    m = bv > .4  # no hot stars
-    logAge, g, r = logAge[m], g[m], r[m]
+    # m = bv > .4  # no hot stars
+    # logAge, g, r = logAge[m], g[m], r[m]
 
     # randomly select stars.
     stars = np.random.choice(np.arange(len(logAge)), N)
