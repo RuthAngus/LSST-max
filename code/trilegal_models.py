@@ -23,16 +23,14 @@ def random_stars(fname, N):
     Gc, logAge, m_h, m_ini, logL, logTeff, logg, m_M0, Av, m2_m1, mbol, u, g,\
         r, i, z, Mact = np.genfromtxt(fname).T
 
-    # convert to B-V and get rid of hot stars
-    bv, bverr = gr_to_bv(g, r)
-    # m = bv > .4  # no hot stars
-    # logAge, g, r = logAge[m], g[m], r[m]
-
     # randomly select stars.
     stars = np.random.choice(np.arange(len(logAge)), N)
     logAges, gs, rs = logAge[stars], g[stars], r[stars]
+    logTeff = logTeff[stars]
+
+    # convert to B-V
     bvs, bverrs = gr_to_bv(gs, rs)
-    return logAges, bvs
+    return logAges, bvs, logTeff
 
 
 if __name__ == "__main__":
