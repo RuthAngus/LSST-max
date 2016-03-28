@@ -5,7 +5,7 @@ import scipy.interpolate as spi
 import mklc
 from LSSToy import generate_visits
 
-def simulate_LSST(id, p, a, path, tmin=3, tmax=30, dur=10, noise=10.):
+def simulate_LSST(id, p, a, path, tmin=3, tmax=30, dur=10, noise=5000.):
     """ Photometry with precision of 10 ppm (?).
     Uneven time sampling that ranges (uniformily) from 3 to 30 days (?).
     Lasting 10 years (?).
