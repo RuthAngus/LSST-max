@@ -30,7 +30,7 @@ def simulate_LSST(id, p, a, path, tmin=3, tmax=30, dur=10, noise=5000.):
     nspot, ff, amp_err = res0
     time, area_tot, dF_tot, dF_tot0 = res1
     y = dF_tot0 / np.median(dF_tot0) - 1 + noise*1e-6 * np.random.randn(len(x))
-    yerr = np.ones_like(y) * noise * 1e-3
+    yerr = np.ones_like(y) * noise * 1e-6
 
     data = np.vstack((x, y, yerr))
     np.savetxt("{0}/{1}.txt".format(path, id), data.T)
