@@ -71,6 +71,7 @@ def recovery(fname, N):
     'true_ps, periods, logamps, teffs, rmags, true_as, noises_ppm'
     """
 
+    print("Loading TRILEGAL output file...")
     # Randomly select targets from a TRILEGAL output.
     logAges, bvs, logTeff, rmag = random_stars(fname, N)
     teff = 10**logTeff
@@ -108,6 +109,7 @@ def recovery(fname, N):
     teff = np.concatenate((cool_teffs, hot_teffs))
     rmag = np.concatenate((cool_rmags, hot_rmags))
 
+    print("Calculating amplitudes...")
     # Use Derek's results to calculate amplitudes
     # Column headings: log10P, log10R, stdR, Nbin
     d35 = pd.read_csv("data/rot_v_act3500.txt")
@@ -131,6 +133,7 @@ def recovery(fname, N):
     noises_ppm = (1 - 10**(-noises_mag/2.5)) * 1e6
 
     # Simulate light curves
+    print("Simulating light curves...")
     path = "simulations"  # where to save the lcs
     [simulate_LSST(i, pers[i], amps[i], path, noises_ppm[i]) for i in
      range(len(pers))]
@@ -145,6 +148,7 @@ def recovery(fname, N):
 
     ps = np.linspace(2, 100, 1000)  # the period array (in days)
 
+    print("Computing periodograms")
     # Now compute LS pgrams for a set of LSST light curves & save highest peak
     ids = np.arange(len(pers))
     periods = np.zeros_like(ids)
@@ -156,8 +160,8 @@ def recovery(fname, N):
         pgram = model.periodogram(ps)
 
         # find peaks
-        peaks = np.array([i for i in range(1, len(ps)-1) if pgram[i-1]
-                          < pgram[i] and pgram[i+1] < pgram[i]])
+        peaks = np.array([j for  j in range(1, len(ps)-1) if pgram[j-1]
+                          < pgram[j] and pgram[j+1] < pgram[j]])
         if len(peaks):
             period = ps[pgram == max(pgram[peaks])][0]
         else:
@@ -165,12 +169,14 @@ def recovery(fname, N):
 
         periods[i] = period
 
+    print("Saving results")
     # Save the data
     data = np.vstack((true_ps, periods, logamps, teffs, rmags, true_as,
                       noises_ppm))
     np.savetxt("rotation_results{0}.txt".format(fname), data.T)
 
 if __name__ == "__main__":
-    fname = "output574523944248.dat"
-    N = 100
+#     fname = "output574523944248.dat"
+    fname = "output16533990464.dat"
+    N = 5000
     recovery(fname, N)
