@@ -99,7 +99,7 @@ def recovery(fname, N):
     hot_ps1 = np.random.randn(int(len(hot_ages)*(1 - A2/A1)))*sig1 + mu1
     hot_ps2 = np.random.randn(int(len(hot_ages)*(A2/A1)))*sig2 + mu2
     hot_ps[:len(hot_ps1)] = hot_ps1
-    hot_ps[len(hot_ps1):len(hot_ps2)] = hot_ps2
+    hot_ps[len(hot_ps1):len(hot_ps1) + len(hot_ps2)] = hot_ps2
     tot = len(hot_ps1) + len(hot_ps2)
     hot_ps[tot:] = np.random.randn(len(hot_ps)-tot)*sig2 + mu2
 
