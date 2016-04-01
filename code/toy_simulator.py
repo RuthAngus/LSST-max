@@ -4,6 +4,7 @@ import matplotlib.pyplot as plt
 import scipy.interpolate as spi
 import mklc
 from LSSToy import generate_visits
+import os
 
 def simulate_LSST(id, p, a, path, noise, tmin=3, tmax=30, dur=10):
     """ Photometry with precision of 10 ppm (?).
@@ -18,6 +19,10 @@ def simulate_LSST(id, p, a, path, noise, tmin=3, tmax=30, dur=10):
     noise: noise level (ppm). Default is 10 ppm.
     """
     id = str(int(id)).zfill(4)
+
+    # only make new simulation if one doesn't already exist
+    if os.path_exists("simulations/{0}".format(id)):
+        return
 
     # The time array
 #     x = np.cumsum(np.random.uniform(tmin, tmax, 1000))
