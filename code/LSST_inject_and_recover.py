@@ -61,8 +61,35 @@ def LSST_sig(m):
     sigs = np.array([.005, .007, .01, .02, .03, .1, .2])
     return sigs[np.abs(mags - m) == np.abs(mags-m).min()][0]
 
+def pgram(N, years):
+    ps = np.linspace(2, 100, 1000)  # the period array (in days)
 
-def recovery(fname, N):
+    print("Computing periodograms")
+    # Now compute LS pgrams for a set of LSST light curves & save highest peak
+    ids = np.arange(N)
+    periods = np.zeros_like(ids)
+    for i, id in enumerate(ids):
+        sid = str(int(id)).zfill(4)
+        x, y, yerr = np.genfromtxt("simulations/{0}.txt".format(sid)).T
+        m = x < years * 365.25
+        xt, yt, yerrt = x[m], y[m], yerr[m][m]
+        model = LombScargle().fit(xt, yt, yerrt)  # compute pgram
+        pgram = model.periodogram(ps)
+
+        # find peaks
+        peaks = np.array([j for  j in range(1, len(ps)-1) if pgram[j-1]
+                          < pgram[j] and pgram[j+1] < pgram[j]])
+        if len(peaks):
+            period = ps[pgram == max(pgram[peaks])][0]
+        else:
+            period = 0
+
+        periods[i] = period
+        np.savetxt("results/{0}_{1}yr_result.txt".format(sid, years), [period])
+    np.savetxt("{0}yr_results.txt".format(years), periods.T)
+    return periods
+
+def inject(fname, N):
     """
     Simulate rotation periods for LSST targets and attempt to recover those
     rotation periods.
@@ -143,40 +170,18 @@ def recovery(fname, N):
     data = np.vstack((ids, pers, amps))
     np.savetxt("{0}/truth.txt".format(path), data.T)
 
-    # load and plot the truth
-    ids, true_ps, true_as = np.genfromtxt("simulations/truth.txt").T
-
-    ps = np.linspace(2, 100, 1000)  # the period array (in days)
-
-    print("Computing periodograms")
-    # Now compute LS pgrams for a set of LSST light curves & save highest peak
-    ids = np.arange(len(pers))
-    periods = np.zeros_like(ids)
-    for i, id in enumerate(ids):
-        sid = str(int(id)).zfill(4)
-        x, y, yerr = np.genfromtxt("simulations/{0}.txt".format(sid)).T
-
-        model = LombScargle().fit(x, y, yerr)  # compute pgram
-        pgram = model.periodogram(ps)
-
-        # find peaks
-        peaks = np.array([j for  j in range(1, len(ps)-1) if pgram[j-1]
-                          < pgram[j] and pgram[j+1] < pgram[j]])
-        if len(peaks):
-            period = ps[pgram == max(pgram[peaks])][0]
-        else:
-            period = 0
-
-        periods[i] = period
-
     print("Saving results")
-    # Save the data
-    data = np.vstack((true_ps, periods, logamps, teffs, rmags, true_as,
-                      noises_ppm))
-    np.savetxt("rotation_results{0}.txt".format(fname), data.T)
+    data = np.vstack((pers, amps, teffs, rmags, noises_ppm))
+    np.savetxt("parameters_{0}.txt".format(fname), data.T)
+    return pers, amps, teffs, rmags, noises_ppm
 
 if __name__ == "__main__":
 #     fname = "output574523944248.dat"
     fname = "output16533990464.dat"
-    N = 5000
-    recovery(fname, N)
+    N = 100
+    years = 1
+    pers, amps, teffs, rmags, noises_ppm = inject(fname, N)
+    periods = pgram(N, years)
+    data = np.vstack((pers, periods, np.log(amps), teffs, rmags, amps,
+                      noises_ppm))
+    np.savetxt("{0}yr_results{1}.txt".format(years, fname), data.T)

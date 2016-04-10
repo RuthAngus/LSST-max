@@ -23,8 +23,8 @@ def random_stars(fname, N):
     Gc, logAge, m_h, m_ini, logL, logTeff, logg, m_M0, Av, m2_m1, mbol, u, g,\
         r, i, z, Mact = np.genfromtxt(fname).T
 
-    # remove stars fainter than 25th and brighter than 16th
-    m = (16 < r) * (r < 25)
+    # remove stars fainter than 25th and brighter than 16th with logg < 4
+    m = (16 < r) * (r < 25) * logg > 4
     logAge, g, r, logTeff = logAge[m], g[m], r[m], logTeff[m]
 
     # randomly select stars.

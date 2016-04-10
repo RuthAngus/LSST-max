@@ -39,6 +39,8 @@ def simulate_LSST(id, p, a, path, noise, tmin=3, tmax=30, dur=10):
 
     data = np.vstack((x, y, yerr))
     np.savetxt("{0}/{1}.txt".format(path, id), data.T)
+    truths = np.array([p, a])
+    np.savetxt("{0}/{1}_truth.txt".format(path, id), truths)
 
     plt.clf()
     plt.errorbar(x/365.25, y, yerr=yerr, fmt="k.", capsize=0)
