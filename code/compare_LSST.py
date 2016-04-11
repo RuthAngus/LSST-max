@@ -3,10 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 import h5py
 import os
+import sys
 
-def compare_pgram(true_p_file, ids, path):  # path is where results are saved
-
-    yr = 10
+def compare_pgram(true_p_file, ids, path, yr):  # path = where results saved
 
     # load recovered
     recovered_periods, true_periods = [np.zeros_like(ids) for i in range(2)]
@@ -56,6 +55,7 @@ if __name__ == "__main__":
     # Load truths
     ids, true_periods, amps = np.genfromtxt("simulations/truth.txt",
                                             skip_header=1).T
-    ids = range(50)
-    compare_pgram(true_periods, ids, "results")
+    ids = range(95)
+    yr = sys.argv[1]
+    compare_pgram(true_periods, ids, "results", yr)
 #     compare_GP(true_periods, ids, "results")

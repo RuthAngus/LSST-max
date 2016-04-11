@@ -1,6 +1,7 @@
 # coding: utf-8
 # # Recovering rotation periods in simulated LSST data
 
+from __future__ import print_function
 import numpy as np
 import matplotlib.pyplot as plt
 from gatspy.periodic import LombScargle
@@ -8,6 +9,7 @@ from toy_simulator import simulate_LSST
 from trilegal_models import random_stars
 import simple_gyro as sg
 import pandas as pd
+import sys
 
 
 def find_nearest(array, value):
@@ -100,7 +102,7 @@ def inject(fname, N):
 
     print("Loading TRILEGAL output file...")
     # Randomly select targets from a TRILEGAL output.
-    logAges, bvs, logTeff, rmag = random_stars(fname, N)
+    logAges, bvs, logTeff, rmag = random_stars("{0}.dat".format(fname), N)
     teff = 10**logTeff
 
     # Calculate periods from ages and colours for cool stars
@@ -161,7 +163,7 @@ def inject(fname, N):
 
     # Simulate light curves
     print("Simulating light curves...")
-    path = "simulations"  # where to save the lcs
+    path = "simulations/{0}".format(fname)  # where to save the lcs
     [simulate_LSST(i, pers[i], amps[i], path, noises_ppm[i]) for i in
      range(len(pers))]
 
@@ -177,11 +179,21 @@ def inject(fname, N):
 
 if __name__ == "__main__":
 #     fname = "output574523944248.dat"
-    fname = "output16533990464.dat"
-    N = 100
-    years = 1
-    pers, amps, teffs, rmags, noises_ppm = inject(fname, N)
-    periods = pgram(N, years)
-    data = np.vstack((pers, periods, np.log(amps), teffs, rmags, amps,
-                      noises_ppm))
-    np.savetxt("{0}yr_results{1}.txt".format(years, fname), data.T)
+#     fname = "l45b-10.dat"
+#     fname = "output16533990464.dat"
+#     fname = "l45b-80.dat"
+    fname = "l45b{0}".format(sys.argv[1])
+
+    # Run simlations
+    N = 5000
+    pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
+
+#     # recover periods
+#     N = 96
+#     pers, amps, teffs, rmags, noises_ppm = \
+#             np.genfromtxt("parameters_{0}.txt".format(fname)).T
+#     years = int(sys.argv[2])
+#     periods = pgram(N, years)
+#     data = np.vstack((pers, periods, np.log(amps), teffs, rmags, amps,
+#                       noises_ppm))
+#     np.savetxt("{0}yr_results{1}.txt".format(years, fname), data.T)
