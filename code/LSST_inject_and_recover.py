@@ -63,7 +63,7 @@ def LSST_sig(m):
     sigs = np.array([.005, .007, .01, .02, .03, .1, .2])
     return sigs[np.abs(mags - m) == np.abs(mags-m).min()][0]
 
-def pgram(N, years):
+def pgram(N, years, fname):
     ps = np.linspace(2, 100, 1000)  # the period array (in days)
 
     print("Computing periodograms")
@@ -72,7 +72,8 @@ def pgram(N, years):
     periods = np.zeros_like(ids)
     for i, id in enumerate(ids):
         sid = str(int(id)).zfill(4)
-        x, y, yerr = np.genfromtxt("simulations/{0}.txt".format(sid)).T
+        x, y, yerr = np.genfromtxt("simulations/{0}/{1}.txt".format(fname,
+                                   sid)).T
         m = x < years * 365.25
         xt, yt, yerrt = x[m], y[m], yerr[m][m]
         model = LombScargle().fit(xt, yt, yerrt)  # compute pgram
@@ -87,8 +88,9 @@ def pgram(N, years):
             period = 0
 
         periods[i] = period
-        np.savetxt("results/{0}_{1}yr_result.txt".format(sid, years), [period])
-    np.savetxt("{0}yr_results.txt".format(years), periods.T)
+        np.savetxt("results/{0}/{1}_{2}yr_result.txt".format(fname, sid,
+                   years), [period])
+    np.savetxt("{0}_{1}yr_results.txt".format(fname, years), periods.T)
     return periods
 
 def inject(fname, N):
@@ -185,15 +187,15 @@ if __name__ == "__main__":
     fname = "l45b{0}".format(sys.argv[1])
 
     # Run simlations
-    N = 5000
-    pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
+#     N = 5000
+#     pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
 
-#     # recover periods
-#     N = 96
-#     pers, amps, teffs, rmags, noises_ppm = \
-#             np.genfromtxt("parameters_{0}.txt".format(fname)).T
-#     years = int(sys.argv[2])
-#     periods = pgram(N, years)
-#     data = np.vstack((pers, periods, np.log(amps), teffs, rmags, amps,
-#                       noises_ppm))
-#     np.savetxt("{0}yr_results{1}.txt".format(years, fname), data.T)
+    # recover periods
+    N = 200
+    pers, amps, teffs, rmags, noises_ppm = \
+            np.genfromtxt("parameters_{0}.txt".format(fname)).T
+    years = int(sys.argv[2])
+    periods = pgram(N, years, fname)
+    data = np.vstack((pers, periods, np.log(amps), teffs, rmags, amps,
+                      noises_ppm))
+    np.savetxt("{0}yr_results{1}.txt".format(years, fname), data.T)
