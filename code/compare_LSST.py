@@ -5,23 +5,25 @@ import h5py
 import os
 import sys
 
-def compare_pgram(true_p_file, ids, path, yr):  # path = where results saved
+def compare_pgram(true_p_file, ids, fname, yr):
 
     # load recovered
     recovered_periods, true_periods = [np.zeros_like(ids) for i in range(2)]
     errs, true_amps = [np.zeros_like(ids) for i in range(2)]
     for i in range(len(ids)):
         id = str(int(ids[i])).zfill(4)
-        recovered_periods[i] = np.genfromtxt("{0}/{1}_{2}yr_result.txt".format(
-                                             path, id, yr)).T
+        recovered_periods[i] = \
+                np.genfromtxt("results/{0}/{1}_{2}yr_result.txt".format(fname,
+                              id, yr)).T
         true_periods[i], true_amps[i] = \
-                np.genfromtxt("simulations/{0}_truth.txt".format(id)).T
+                np.genfromtxt("simulations/{0}/{1}_truth.txt".format(fname,
+                              id)).T
 
     plt.clf()
     plt.plot(true_periods, recovered_periods, "k.")
     xs = np.linspace(min(true_periods), max(true_periods), 100)
     plt.plot(xs, xs, "r--")
-    plt.savefig("pgram_compare_{0}yr".format(yr))
+    plt.savefig("pgram_compare_{0}_{1}yr".format(fname, yr))
 
 def compare_GP(true_periods, ids, path):
 
@@ -53,9 +55,13 @@ def compare_GP(true_periods, ids, path):
 if __name__ == "__main__":
 
     # Load truths
-    ids, true_periods, amps = np.genfromtxt("simulations/truth.txt",
-                                            skip_header=1).T
-    ids = range(95)
-    yr = sys.argv[1]
-    compare_pgram(true_periods, ids, "results", yr)
-#     compare_GP(true_periods, ids, "results")
+    fname = "l45b{0}".format(sys.argv[1])
+    ids, true_periods, amps = \
+            np.genfromtxt("simulations/{0}/truth.txt".format(fname),
+                          skip_header=1).T
+    N = 4000
+    ids = range(N)
+    years = [1, 3, 5, 10]
+    for yr in years:
+        print("year", yr)
+        compare_pgram(true_periods[:N], ids[:N], fname, yr)
