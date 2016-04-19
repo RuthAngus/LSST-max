@@ -24,7 +24,7 @@ def random_stars(fname, N):
         r, i, z, Mact = np.genfromtxt(fname).T
 
     # remove stars fainter than 25th and brighter than 16th with logg < 4
-    m = (16 < r) * (r < 25) * logg > 4
+    m = (16 < r) * (r < 28) * logg > 4
     logAge, g, r, logTeff = logAge[m], g[m], r[m], logTeff[m]
 
     # randomly select stars.
