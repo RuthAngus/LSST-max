@@ -26,36 +26,36 @@ def Teff2M(t):
     """
     return (t/const.Tsun)**(4./2.5) * const.Msun
 
-def Kroupa_IMF(m, dm, N):
-    """
-    IMF from Kroupa (2001), arXiv: 0009005
-    m: the mass (solar masses).
-    dm: the mass interval.
-    N: a reference number.
-    Returns the number of single stars in the mass interval m to m + dm.
-    """
-    if .01 < m and m < .08:
-        a = .3
-    elif .08 < m and m < .5:
-        a = 1.3
-    elif .5 < m and m < 1.:
-        a = 2.3
-    elif 1. < m:
-        a = 2.3
-    return N *
+# def Kroupa_IMF(m, dm, N):
+#     """
+#     IMF from Kroupa (2001), arXiv: 0009005
+#     m: the mass (solar masses).
+#     dm: the mass interval.
+#     N: a reference number.
+#     Returns the number of single stars in the mass interval m to m + dm.
+#     """
+#     if .01 < m and m < .08:
+#         a = .3
+#     elif .08 < m and m < .5:
+#         a = 1.3
+#     elif .5 < m and m < 1.:
+#         a = 2.3
+#     elif 1. < m:
+#         a = 2.3
+#     return N *
 
-def IMF(t, dt, N):
-    """
-    IMF from Kroupa (2001), arXiv: 0009005, converted to Teff
-    t: the Teff (K)
-    dt: the temp interval.
-    Returns the number of single stars in the temp interval t to t + dt.
-    """
+# def IMF(t, dt, N):
+#     """
+#     IMF from Kroupa (2001), arXiv: 0009005, converted to Teff
+#     t: the Teff (K)
+#     dt: the temp interval.
+#     Returns the number of single stars in the temp interval t to t + dt.
+#     """
 
 def V2r(V, BV):
     return V - .42*BV + .11
 
-def format(fname, age, feh, nG, nK, nM, mvG, mvK, mvM, e_bv):
+def format(fname, age, feh, nG, nK, nM, mvG, mvK, mvM, e_bv, use_IMF=False):
 
     ntot = nG + nK + nM
 
@@ -76,26 +76,37 @@ def format(fname, age, feh, nG, nK, nM, mvG, mvK, mvM, e_bv):
                            V2r(mvM, bvs[nG+nK:])))
 
     data = np.vstack((logAges, bvs, logTeff, rmag))
-    np.savetxt(fname, data.T)
+    np.savetxt("{0}.dat".format(fname), data.T)
     return logAges, bvs, logTeff, rmag
 
 if __name__ == "__main__":
 
     # IC 4651
-#     format("IC4651", 1.778, -.128, 75, 215, 1500, 14.87, 16.01, 18.91)
-    format("IC4651", 1.778, -.128, 5000, 5000, 5000, 14.87, 16.01, 18.91)
+    name = "IC4651"
+    age = 1.778
+    feh = -.128
+    nG, nK, nM = 2000, 2000, 2000
+#     nG nK, nM = 75, 215, 1500
+    mvG, mvK, mvM = 14.87, 16.01, 18.91
+    e_bv = .121
+    format(name, age, feh, nG, nK, nM, mvG, mvK, mvM, e_bv)
 
     # NGC 5316
-#     format("NGC5316", .170, .045, 90, 240, 1650, 16.11, 17.25, 20.15)
-    format("NGC5316", .170, .045, 5000, 5000, 5000, 16.11, 17.25, 20.15)
+    name = "NGC5316"
+    age = .170
+    feh = .045
+    nG, nK, nM = 2000, 2000, 2000
+#     nG nK, nM = 90, 240, 1650
+    mvG, mvK, mvM = 16.11, 17.25, 20.15
+    e_bv = .312
+    format(name, age, feh, nG, nK, nM, mvG, mvK, mvM, e_bv)
 
     # NGC 2477
-#     format("NGC2477", .822, -.192, 90, 240, 1650, 16.44, 17.58, 20.48)
-    format("NGC2477", .822, -.192, 5000, 5000, 5000, 16.44, 17.58, 20.48)
-
-# NGC 5316: 90 G dwarfs, 240 K dwarfs, 1650 M dwarfs
-# Age = .170 Gyrs, distance = 1208 pc, dm = 10.410
-# NGC 2477: 90 G dwarfs, 240 K dwarfs, 1650 M dwarfs
-# Age = .822 Gyrs, distance = 1450, dm = 10.807
-# IC 4651: 75 G dwarfs, 215 K dwarfs, 1500 M dwarfs.
-# Age = 1.778 Gyrs, distance = 888, dm = 9.742
+    name = "NGC2477"
+    age = .822
+    feh = -.193
+    nG, nK, nM = 2000, 2000, 2000
+#     nG nK, nM = 90, 240, 1650
+    mvG, mvK, mvM = 16.44, 17.58, 20.48
+    e_bv = .291
+    format(name, age, feh, nG, nK, nM, mvG, mvK, mvM, e_bv)

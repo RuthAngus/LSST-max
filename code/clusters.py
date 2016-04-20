@@ -92,7 +92,7 @@ def pgram(N, years, fname):
     np.savetxt("{0}_{1}yr_results.txt".format(fname, years), periods.T)
     return periods
 
-def inject(fname, N):
+def inject(fname):
     """
     Simulate rotation periods for LSST targets and attempt to recover those
     rotation periods.
@@ -101,9 +101,8 @@ def inject(fname, N):
     'true_ps, periods, logamps, teffs, rmags, true_as, noises_ppm'
     """
 
-    print("Loading TRILEGAL output file...")
+    print("Loading Cluster file...")
     # Randomly select targets from a TRILEGAL output.
-#     logAges, bvs, logTeff, rmag = random_stars("{0}.dat".format(fname), N)
     logAges, bvs, logTeff, rmag = np.genfromtxt("{0}.dat".format(fname)).T
     teff = 10**logTeff
 
@@ -156,9 +155,9 @@ def inject(fname, N):
                         make_arrays(d40, 4000, ps, teff, rmag),
                         make_arrays(d45, 4500, ps, teff, rmag),
                         make_arrays(d50, 5000, ps, teff, rmag),
-                        make_arrays(d55, 5500, ps, teff, rmag),
-                        make_arrays(d60, 6000, ps, teff, rmag)),
+                        make_arrays(d55, 5500, ps, teff, rmag)),
                        axis=1)
+#                         make_arrays(d60, 6000, ps, teff, rmag)),
     amps = 10**logamps  # parts per million
     noises_mag = np.array([LSST_sig(mag) for mag in rmags])
     noises_ppm = (1 - 10**(-noises_mag/2.5)) * 1e6
@@ -183,8 +182,7 @@ if __name__ == "__main__":
     fname = "{0}".format(sys.argv[1])
 
     # Run simlations
-    N = 20000
-    pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
+    pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname))
 
 #     # recover periods
 #     pers, amps, teffs, rmags, noises_ppm = \
