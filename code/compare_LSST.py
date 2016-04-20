@@ -12,12 +12,13 @@ def compare_pgram(true_p_file, ids, fname, yr):
     errs, true_amps = [np.zeros_like(ids) for i in range(2)]
     for i in range(len(ids)):
         id = str(int(ids[i])).zfill(4)
-        recovered_periods[i] = \
-                np.genfromtxt("results/{0}/{1}_{2}yr_result.txt".format(fname,
-                              id, yr)).T
-        true_periods[i], true_amps[i] = \
-                np.genfromtxt("simulations/{0}/{1}_truth.txt".format(fname,
-                              id)).T
+        pfile = "results/{0}/{1}_{2}yr_result.txt".format(fname, id, yr)
+        if os.path.exists(pfile):
+            recovered_periods[i] = np.genfromtxt(pfile).T
+            true_periods[i], true_amps[i] = \
+                    np.genfromtxt("simulations/{0}/{1}_truth.txt".format(fname,
+                                  id)).T
+        else: true_periods[i], true_amps[i] = 0, 0
 
     plt.clf()
     plt.plot(true_periods, recovered_periods, "k.")
@@ -61,7 +62,7 @@ if __name__ == "__main__":
                           skip_header=1).T
     N = 20000
     ids = range(N)
-    years = [1, 3, 5, 10]
+    years = [1, 5, 10]
     for yr in years:
         print("year", yr)
         compare_pgram(true_periods[:N], ids[:N], fname, yr)
