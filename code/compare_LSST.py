@@ -59,7 +59,7 @@ if __name__ == "__main__":
     ids, true_periods, amps = \
             np.genfromtxt("simulations/{0}/truth.txt".format(fname),
                           skip_header=1).T
-    N = 4000
+    N = 20000
     ids = range(N)
     years = [1, 3, 5, 10]
     for yr in years:

@@ -182,17 +182,17 @@ def inject(fname, N):
 if __name__ == "__main__":
     fname = "l45b{0}".format(sys.argv[1])
 
-    # Run simlations
-    N = 20000
-    pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
+#     # Run simlations
+#     N = 20000
+#     pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
 
-#     # recover periods
-#     pers, amps, teffs, rmags, noises_ppm = \
-#             np.genfromtxt("parameters_{0}.txt".format(fname)).T
-#     N = len(pers)
-#     years = [1, 3, 5, 10]
-#     for year in years:
-#         periods = pgram(N, year, fname)
-#         data = np.vstack((pers, periods, np.log(amps), teffs, rmags, amps,
-#                           noises_ppm))
-#         np.savetxt("{0}yr_results{1}.txt".format(year, fname), data.T)
+    # recover periods
+    pers, amps, teffs, rmags, noises_ppm = \
+            np.genfromtxt("parameters_{0}.txt".format(fname)).T
+    N = len(pers)
+    years = [1, 5, 10]
+    for year in years:
+        periods = pgram(N, year, fname)
+        data = np.vstack((pers, periods, np.log(amps), teffs, rmags, amps,
+                          noises_ppm))
+        np.savetxt("{0}yr_results{1}.txt".format(year, fname), data.T)
