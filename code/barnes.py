@@ -18,4 +18,4 @@ def period(age, bv):
     return 0.7725*(bv - .4)**.601 * (age*1e3)**.5189
 
 if __name__ == "__main__":
-    print(period(4.5, .65))
+    print(period(10, .65))
