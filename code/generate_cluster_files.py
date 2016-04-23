@@ -69,6 +69,9 @@ def format(fname, age, feh, nG, nK, nM, mvG, mvK, mvM, e_bv, use_IMF=False):
     # create arrays of feh, b-v, log(age) and log(teff)
     fehs = np.ones(ntot) * feh
     bvs = teff2bv_orig(teffs, fehs, loggs) - e_bv
+    bv_func = lambda n, Xmin, Xmax: np.random.uniform(Xmin, Xmax, n)
+    bvs = np.concatenate((bv_func(nG, .5, .8), bv_func(nK, .8, 1.1),
+                            tf(nM, 1.1, 1.4)))
     logAges = np.ones(ntot) * np.log10(age)
     logTeff = np.log10(teffs)
 
@@ -83,7 +86,7 @@ if __name__ == "__main__":
 
     # IC 4651
     name = "IC4651"
-    age = 1.778
+    age = 1.778 * 1e9
     feh = -.128
     nG, nK, nM = 2000, 2000, 2000
 #     nG nK, nM = 75, 215, 1500
@@ -93,7 +96,7 @@ if __name__ == "__main__":
 
     # NGC 5316
     name = "NGC5316"
-    age = .170
+    age = .170 * 1e9
     feh = .045
     nG, nK, nM = 2000, 2000, 2000
 #     nG nK, nM = 90, 240, 1650
@@ -103,7 +106,7 @@ if __name__ == "__main__":
 
     # NGC 2477
     name = "NGC2477"
-    age = .822
+    age = .822 * 1e9
     feh = -.193
     nG, nK, nM = 2000, 2000, 2000
 #     nG nK, nM = 90, 240, 1650
