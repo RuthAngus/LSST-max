@@ -181,8 +181,8 @@ def inject(fname):
 if __name__ == "__main__":
     fname = "{0}".format(sys.argv[1])
 
-#     # Run simlations
-#     pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname))
+    # Run simlations
+    pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname))
 
     # recover periods
     pers, amps, teffs, rmags, noises_ppm = \
