@@ -73,18 +73,16 @@ def percents(X, X_r, teffs, teffs_r):
     percent, bins = find_fraction(X, X_r, None)
 
     # now for different temperatures
-    Gmin, Gmax = 5200, 6000
-    Kmin, Kmax = 3700, 5200
-    Mmin, Mmax = 2400, 3700
     mf = lambda Xmin, Xmax, t: (Xmin < t) * (t < Xmax)
-    Gm, Km, Mm = mf(Gmin, Gmax, teffs), mf(Kmin, Kmax, teffs), \
-                 mf(Mmin, Mmax, teffs)
-    Gmr, Kmr, Mmr = mf(Gmin, Gmax, teffs_r), mf(Kmin, Kmax, teffs_r), \
-                 mf(Mmin, Mmax, teffs_r)
+    Gm, Km, Mm, Fm = mf(Gmin, Gmax, teffs), mf(Kmin, Kmax, teffs), \
+                 mf(Mmin, Mmax, teffs), mf(Fmin, Fmax, teffs)
+    Gmr, Kmr, Mmr, Fmr = mf(Gmin, Gmax, teffs_r), mf(Kmin, Kmax, teffs_r), \
+                 mf(Mmin, Mmax, teffs_r), mf(Fmin, Fmax, teffs_r)
     Gpercent, Gbins = find_fraction(X[Gm], X_r[Gmr], bins)
     Kpercent, Kbins = find_fraction(X[Km], X_r[Kmr], bins)
     Mpercent, Mbins = find_fraction(X[Mm], X_r[Mmr], bins)
-    return Gpercent, Kpercent, Mpercent, bins
+    Fpercent, Fbins = find_fraction(X[Fm], X_r[Fmr], bins)
+    return Gpercent, Kpercent, Mpercent, Fpercent, bins
 
 def summary_plot(data, b, f):
     """
@@ -106,11 +104,13 @@ def summary_plot(data, b, f):
 
     # Calculate the percentage recovery as a function of period for the
     # different spectral types
-    Gpercent, Kpercent, Mpercent, bins = percents(pers, pers_r, teffs,
-                                                  teffs_r)
+    Gpercent, Kpercent, Mpercent, Fpercent, bins = percents(pers, pers_r,
+                                                            teffs, teffs_r)
 
     # make the plot
     plt.clf()
+    # plt.step(bins[:-1], Fpercent, lw=2, color="MediumPurple",
+    #          label="$\mathrm{F~dwarfs}$")
     plt.step(bins[:-1], Gpercent, lw=2, color="CornflowerBlue",
              label="$\mathrm{G~dwarfs}$")
     plt.step(bins[:-1], Kpercent, lw=2, color="LimeGreen",
@@ -122,9 +122,52 @@ def summary_plot(data, b, f):
     plt.ylabel("$\mathrm{Percentage~Successfully~Recovered}$")
     plt.ylim(30, 102)
     plt.legend(loc="best")
-    plt.savefig("recovered_hist.pdf")
+    plt.savefig("recovered_hist_{0}.pdf".format(b))
+
+def trilegal(data, b):
+    """
+    Make histograms of trilegal outputs.
+    Histograms of Rotation period for different masses
+    """
+
+    # load data
+    pers, periods, log_amps, teffs, rmags, amps, noises_ppm = data
+
+    mf = lambda Xmin, Xmax, t: (Xmin < t) * (t < Xmax)
+
+    m = (teffs < 7000) * (2000 < teffs)
+
+    plt.clf()
+    plt.hist(teffs[m], color="w", histtype="stepfilled")
+    plt.xlabel("$\mathrm{Effective~Temperature~(K)}$")
+    plt.ylabel("$\mathrm{Number~out~of~20,0000}$")
+    plt.savefig("trilegal_teff_hist{0}.pdf".format(b))
+
+    plt.clf()
+    m = (teffs < 7000) * (2000 < teffs) * pers > 0
+    plt.hist(pers[m], color="w", histtype="stepfilled")
+    plt.xlabel("$\mathrm{Injected~Rotation~Period~(Days)}$")
+    plt.ylabel("$\mathrm{Number~out~of~20,0000}$")
+    plt.savefig("trilegal_period_hist{0}.pdf".format(b))
+
+    # plt.clf()
+    # plt.hist(pers[mf(Kmin, Kmax, teffs)], color="LimeGreen",
+    #          label="$\mathrm{K~dwarfs}$")
+    # plt.hist(pers[mf(Mmin, Mmax, teffs)], color="DarkOrange",
+    #          label="$\mathrm{M~dwarfs}$")
+    # plt.hist(pers[mf(Gmin, Gmax, teffs)], color="CornflowerBlue",
+    #          label="$\mathrm{G~dwarfs}$")
+    # plt.legend(loc="best")
+    # plt.savefig("trilegal_period_hist.pdf")
+
 
 if __name__ == "__main__":
+
+    Fmin, Fmax = 6000, 7000
+    Gmin, Gmax = 5200, 6000
+    Kmin, Kmax = 3700, 5200
+    Mmin, Mmax = 2400, 3700
+
     yr = 10
     b = -10
 
@@ -137,3 +180,4 @@ if __name__ == "__main__":
     # make the plots
     summary_plot(data2, b, .1)
     # make_plot(data, b)
+    # trilegal(data, b)
