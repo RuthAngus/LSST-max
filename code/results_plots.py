@@ -56,13 +56,35 @@ def recovered(data, f):
     return np.vstack((pers[m], periods[m], log_amps[m], teffs[m], rmags[m],
                       amps[m], noises_ppm[m]))
 
-def find_fraction(pers, pers_r):
-    # Fraction recovered as a function of P
-    true_hist, bins = np.histogram(pers)
-    measured_hist, _ = np.histogram(pers_r, bins)
+def find_fraction(X, X_r, bins):
+    # Fraction recovered as a function of X
+    if bins == None:
+        true_hist, bins = np.histogram(X)
+        measured_hist, _ = np.histogram(X_r, bins)
+    else:
+        true_hist, _ = np.histogram(X, bins)
+        measured_hist, _ = np.histogram(X_r, bins)
     th = np.array([float(i) for i in true_hist])
     mh = np.array([float(i) for i in measured_hist])
     return mh/th*100, bins  # percent
+
+def percents(X, X_r, teffs, teffs_r):
+    # total --- all stars
+    percent, bins = find_fraction(X, X_r, None)
+
+    # now for different temperatures
+    Gmin, Gmax = 5200, 6000
+    Kmin, Kmax = 3700, 5200
+    Mmin, Mmax = 2400, 3700
+    mf = lambda Xmin, Xmax, t: (Xmin < t) * (t < Xmax)
+    Gm, Km, Mm = mf(Gmin, Gmax, teffs), mf(Kmin, Kmax, teffs), \
+                 mf(Mmin, Mmax, teffs)
+    Gmr, Kmr, Mmr = mf(Gmin, Gmax, teffs_r), mf(Kmin, Kmax, teffs_r), \
+                 mf(Mmin, Mmax, teffs_r)
+    Gpercent, Gbins = find_fraction(X[Gm], X_r[Gmr], bins)
+    Kpercent, Kbins = find_fraction(X[Km], X_r[Kmr], bins)
+    Mpercent, Mbins = find_fraction(X[Mm], X_r[Mmr], bins)
+    return Gpercent, Kpercent, Mpercent, bins
 
 def summary_plot(data, b, f):
     """
@@ -84,26 +106,22 @@ def summary_plot(data, b, f):
 
     # Calculate the percentage recovery as a function of period for the
     # different spectral types
-    Gmin, Gmax = 5200, 6000
-    Kmin, Kmax = 3700, 5200
-    Mmin, Mmax = 2400, 3700
-    mf = lambda Xmin, Xmax, t: (Xmin < t) * (t < Xmax)
-    Gm, Km, Mm = mf(Gmin, Gmax, teffs), mf(Kmin, Kmax, teffs), \
-                 mf(Mmin, Mmax, teffs)
-    Gmr, Kmr, Mmr = mf(Gmin, Gmax, teffs_r), mf(Kmin, Kmax, teffs_r), \
-                 mf(Mmin, Mmax, teffs_r)
-    Gpercent, Gbins = find_fraction(pers[Gm], pers_r[Gmr])
-    Kpercent, Kbins = find_fraction(pers[Km], pers_r[Kmr])
-    Mpercent, Mbins = find_fraction(pers[Mm], pers_r[Mmr])
+    Gpercent, Kpercent, Mpercent, bins = percents(pers, pers_r, teffs,
+                                                  teffs_r)
 
     # make the plot
     plt.clf()
-    plt.step(Gbins[:-1], Gpercent, lw=2, color=cols.blue)
-    plt.step(Kbins[:-1], Kpercent, lw=2, color=cols.orange)
-    plt.step(Mbins[:-1], Mpercent, lw=2, color=cols.pink)
-    plt.xlim(0, Gbins[-2])
+    plt.step(bins[:-1], Gpercent, lw=2, color="CornflowerBlue",
+             label="$\mathrm{G~dwarfs}$")
+    plt.step(bins[:-1], Kpercent, lw=2, color="LimeGreen",
+             label="$\mathrm{K~dwarfs}$")
+    plt.step(bins[:-1], Mpercent, lw=2, color="DarkOrange",
+             label="$\mathrm{M~dwarfs}$")
+    plt.xlim(0, bins[-2])
     plt.xlabel("$\mathrm{Injected~Rotation~Period~(Days)}$")
     plt.ylabel("$\mathrm{Percentage~Successfully~Recovered}$")
+    plt.ylim(30, 102)
+    plt.legend(loc="best")
     plt.savefig("recovered_hist.pdf")
 
 if __name__ == "__main__":
