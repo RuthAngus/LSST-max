@@ -1,4 +1,5 @@
 # coding: utf-8
+from __future__ import print_function
 import numpy as np
 import matplotlib.pyplot as plt
 import lsst.sims.maf.db as db
@@ -31,19 +32,12 @@ def get_cadence(ra, dec, b, snrLimit, nPtsLimit, filters, outDir, opsimdb,
     plt.clf()
     for fname in filters:
         good = np.where(bundle.metricValues.data[0]['filter'] == fname)
-        print(bundle.metricValues.data[0]['expMJD'][good] - dayZero)
-        print(type(bundle.metricValues.data[0]['expMJD'][good] - dayZero))
-        print(np.shape(bundle.metricValues.data[0]['expMJD'][good] - dayZero))
         times.append(bundle.metricValues.data[0]['expMJD'][good] - dayZero)
         depths.append(bundle.metricValues.data[0]['fiveSigmaDepth'][good])
 
         plt.scatter(bundle.metricValues.data[0]['expMJD'][good] - dayZero,
                     bundle.metricValues.data[0]['fiveSigmaDepth'][good],
                     c=colors[fname], label=fname)
-    times = np.array(times)
-    depths = np.array(depths)
-    print(np.shape(times))
-    print(np.shape(depths))
 
     plt.xlabel('Day')
     plt.ylabel('5$\sigma$ depth')
@@ -72,7 +66,13 @@ if __name__ == "__main__":
     decs_rad = np.radians(decs_deg)
 
     for i, ra in enumerate(ras_rad):
+        print("b = ", bs[i])
         times, five_sig_depths = get_cadence(ra, decs_rad[i], bs[i], snrLimit,
                                              nPtsLimit, filters, outDir,
                                              opsimdb, resultsDb)
-        np.savetxt("l45b{0}_cadence.txt".format(int(bs[i])), times.T)
+        print(len(times), len(filters))
+        for i in range(len(filters)):
+            data = np.vstack((np.array(times[i]),
+                              np.array(five_sig_depths[i])))
+            np.savetxt("l45b{0}_{1}_cadence.txt".format(bs[i], filters[i]),
+                       data.T)
