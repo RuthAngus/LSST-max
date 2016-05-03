@@ -1,3 +1,53 @@
+\documentclass[useAMS, usenatbib, preprint, 12pt]{aastex}
+\usepackage{cite, natbib}
+\usepackage{float}
+\usepackage{epsfig}
+\usepackage{cases}
+\usepackage[section]{placeins}
+\usepackage{graphicx, subfigure}
+\usepackage{color}
+
+\newcommand{\article}{article}
+\newcommand{\uHz}{$\mu$Hz}
+\newcommand{\oxford}{1}
+\newcommand{\CU}{2}
+\newcommand{\UW}{3}
+\newcommand{\WW}{4}
+\newcommand{\cfa}{5}
+\newcommand{\noao}{6}
+\newcommand{\ktwo}{{\it K2}}
+\newcommand{\Ktwo}{{\it K2}}
+\newcommand{\kepler}{{\it Kepler}}
+\newcommand{\Kepler}{{\it Kepler}}
+\newcommand{\LSST}{{\it LSST}}
+\newcommand{\lsst}{{\it LSST}}
+\newcommand{\TESS}{{\it TESS}}
+\newcommand{\tess}{{\it TESS}}
+
+\begin{document}
+
+\title{Stellar Rotation period recovery with LSST}
+
+\author{%
+   Ruth Angus\altaffilmark{\oxford, \CU}
+   Suzanne Hawley\altaffilmark{\UW}
+   Jim Davenport\altaffilmark{\WW}
+   Derek Buzasi\altaffilmark{\WW}
+   S{\o}ren Meibom\altaffilmark{\cfa}
+   Suzanne Aigrain\altaffilmark{\oxford}
+   Jonathan Sick\altaffilmark{\noao}
+   Mark Giampapa\altaffilmark{\cfa}
+   Vinay Kashyap\altaffilmark{\cfa}
+   \&
+}
+
+\altaffiltext{\oxford}{Subdepartment of Astrophysics, University of Oxford, OX1 3RH, UK, ruthangus@gmail.com}
+\altaffiltext{\cfa}{Harvard-Smithsonian Center for Astrophysics, 60 Garden St.,
+Cambridge, MA, USA}
+
+\begin{abstract}
+
+
 \chapter{LSST}
 \label{chapter:future}
 
@@ -534,3 +584,7 @@ Correlated noise is also likely to plague \LSST\ data and we hope to
 incorporate a realistic correlated noise model into our simulations if one
 becomes available.}
 \end{itemize}
+
+\bibliographystyle{plainnat}
+\bibliography{k2rotation}
+\end{document}
