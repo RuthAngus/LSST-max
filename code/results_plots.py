@@ -107,20 +107,23 @@ def summary_plot(data, b, f):
     Gpercent, Kpercent, Mpercent, Fpercent, bins = percents(pers, pers_r,
                                                             teffs, teffs_r)
 
+
+    Gfrac, Kfrac, Mfrac = 0.2426, 0.5429, 0.8339
+    # Gfrac, Kfrac, Mfrac = 1, 1, 1
     # make the plot
     plt.clf()
     # plt.step(bins[:-1], Fpercent, lw=2, color="MediumPurple",
     #          label="$\mathrm{F~dwarfs}$")
-    plt.step(bins[:-1], Gpercent, lw=2, color="CornflowerBlue",
+    plt.step(bins[:-1], Gpercent*Gfrac, lw=2, color="CornflowerBlue",
              label="$\mathrm{G~dwarfs}$")
-    plt.step(bins[:-1], Kpercent, lw=2, color="LimeGreen",
+    plt.step(bins[:-1], Kpercent*Kfrac, lw=2, color="LimeGreen",
              label="$\mathrm{K~dwarfs}$")
-    plt.step(bins[:-1], Mpercent, lw=2, color="DarkOrange",
+    plt.step(bins[:-1], Mpercent*Mfrac, lw=2, color="DarkOrange",
              label="$\mathrm{M~dwarfs}$")
     plt.xlim(0, bins[-2])
     plt.xlabel("$\mathrm{Injected~Rotation~Period~(Days)}$")
     plt.ylabel("$\mathrm{Percentage~Successfully~Recovered}$")
-    plt.ylim(30, 102)
+    plt.ylim(0, 100)
     plt.legend(loc="best")
     plt.savefig("recovered_hist_{0}.pdf".format(b))
 
@@ -149,16 +152,6 @@ def trilegal(data, b):
     plt.xlabel("$\mathrm{Injected~Rotation~Period~(Days)}$")
     plt.ylabel("$\mathrm{Number~out~of~20,0000}$")
     plt.savefig("trilegal_period_hist{0}.pdf".format(b))
-
-    # plt.clf()
-    # plt.hist(pers[mf(Kmin, Kmax, teffs)], color="LimeGreen",
-    #          label="$\mathrm{K~dwarfs}$")
-    # plt.hist(pers[mf(Mmin, Mmax, teffs)], color="DarkOrange",
-    #          label="$\mathrm{M~dwarfs}$")
-    # plt.hist(pers[mf(Gmin, Gmax, teffs)], color="CornflowerBlue",
-    #          label="$\mathrm{G~dwarfs}$")
-    # plt.legend(loc="best")
-    # plt.savefig("trilegal_period_hist.pdf")
 
 
 if __name__ == "__main__":
