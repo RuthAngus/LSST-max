@@ -70,9 +70,8 @@ if __name__ == "__main__":
         times, five_sig_depths = get_cadence(ra, decs_rad[i], bs[i], snrLimit,
                                              nPtsLimit, filters, outDir,
                                              opsimdb, resultsDb)
-        print(len(times), len(filters))
-        for i in range(len(filters)):
-            data = np.vstack((np.array(times[i]),
-                              np.array(five_sig_depths[i])))
-            np.savetxt("l45b{0}_{1}_cadence.txt".format(bs[i], filters[i]),
+        for j in range(len(filters)):
+            data = np.vstack((np.array(times[j]),
+                              np.array(five_sig_depths[j])))
+            np.savetxt("l45b{0}_{1}_cadence.txt".format(bs[i], filters[j]),
                        data.T)
