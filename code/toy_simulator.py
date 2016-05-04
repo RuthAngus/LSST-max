@@ -26,9 +26,9 @@ def simulate_LSST(id, p, a, path, noise, tmin=3, tmax=30, dur=10):
     """
     id = str(int(id)).zfill(4)
 
-    # only make new simulation if one doesn't already exist
-    if os.path.exists("simulations/{0}".format(id)):
-        return
+#     # only make new simulation if one doesn't already exist
+#     if os.path.exists("simulations/{0}".format(id)):
+#         return
 
     # The time array
 #     x = np.cumsum(np.random.uniform(tmin, tmax, 1000))
@@ -36,8 +36,10 @@ def simulate_LSST(id, p, a, path, noise, tmin=3, tmax=30, dur=10):
     x = generate_visits()
     x += -x[0]
 
-    np.random.seed(1234)
-    res0, res1 = mklc.mklc(x, p=p)
+    sin2incl = np.random.uniform(np.sin(0)**2, np.sin(np.pi/2)**2)
+    incl = np.arcsin(sin2incl**.5)
+    tau = np.exp(np.random.uniform(np.log(p), np.log(10*p)))
+    res0, res1 = mklc.mklc(x, incl=incl, tau=tau, p=p)
     nspot, ff, amp_err = res0
     time, area_tot, dF_tot, dF_tot0 = res1
     noise_free_y = dF_tot0 / np.median(dF_tot0) - 1
