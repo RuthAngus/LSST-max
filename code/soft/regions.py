@@ -95,6 +95,9 @@ def add_region(nday, ic, lo, lat, k, bsiz1, seed, phase):
     y = rand_array[rand_array < 1.8][0]
     np.seed(seed)
     z = np.random.uniform(1)
+    if z > 1.4:
+        ang = .5*lat + 2. + 27.*x*y  # tilt angle (degrees)
+    else:
 
 if __name__ == "__main__":
 
