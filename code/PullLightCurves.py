@@ -8,6 +8,21 @@ import lsst.sims.maf.metrics as metrics
 import lsst.sims.maf.slicers as slicers
 import lsst.sims.maf.metricBundles as metricBundles
 
+def collate(b):
+    filters = ["u", "g", "r", "i", "z", "y"]
+    all_times, all_depths = [], []
+    for i, f in enumerate(filters):
+        times, depths = np.genfromtxt("l45b{0}_{1}_cadence.txt".format(b, f))
+        all_times.append(times)
+        all_depths.append(depths)
+    t = np.array([i for i in all_times for j in i])
+    d = np.array([i for i in all_depths for j in i])
+    inds = np.argsort(t)
+    t, d = t[inds], d[inds]
+    print(t)
+    assert 0
+    data = np.vstack((t, d))
+    np.savetxt("b{0}_cadence.txt".format(b), data.T)
 
 def get_cadence(ra, dec, b, snrLimit, nPtsLimit, filters, outDir, opsimdb,
                 resultsDb):
@@ -46,8 +61,7 @@ def get_cadence(ra, dec, b, snrLimit, nPtsLimit, filters, outDir, opsimdb,
 
     return times, depths
 
-if __name__ == "__main__":
-
+def get_cadences():
     outDir = 'LightCurve'
     dbFile = '/Users/ruthangus/Downloads/minion_1016_sqlite.db'
     opsimdb = utils.connectOpsimDb(dbFile)
@@ -75,3 +89,6 @@ if __name__ == "__main__":
                               np.array(five_sig_depths[j])))
             np.savetxt("l45b{0}_{1}_cadence.txt".format(bs[i], filters[j]),
                        data.T)
+
+if __name__ == "__main__":
+    get_cadences()
