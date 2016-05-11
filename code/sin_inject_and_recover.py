@@ -39,7 +39,7 @@ def pgram(N, years, fname):
     np.savetxt("{0}_{1}yr_results.txt".format(fname, years), periods.T)
     return periods
 
-def simulate_sin(id, b, p, a, noise, path):
+def simulate_sin(fname, id, b, p, a, noise, path):
     """
     id: id of the star.
     p: rotation period in seconds
@@ -49,7 +49,7 @@ def simulate_sin(id, b, p, a, noise, path):
     id = str(int(id)).zfill(4)
 
     # The time array
-    x, depth = np.genfromtxt("b{0}_cadence.txt".format(b)).T
+    x, depth = np.genfromtxt(fname).T
     noise_free_y = a * np.sin(2*np.pi*(1./p))
     y = noise_free_y + noise*1e-6 * np.random.randn(len(x))
     yerr = np.ones_like(y) * noise * 1e-6
@@ -67,36 +67,41 @@ def simulate_sin(id, b, p, a, noise, path):
     plt.subplots_adjust(left=.2, bottom=.12)
     plt.savefig("test.pdf".format(id))
 
-def inject(fname, N, b):
+def inject(fname, b, pers, amps, rmags, band):
     """
     Simulate sinusoids and attempt to recover those rotation periods.
     Saves an array of injected periods (days), recovered periods (days),
     rmag, injected amplitudes (ppm) and noise (ppm).
+    band = "all", or one of ugrizy
     """
+    N = len(pers)
 
-    pers = np.exp(np.random.uniform(.1, 300, N))
-    amps = np.random.uniform(1e2, 1e5, N)
-    rmags = np.random.uniform(16, 28, N)
     noises_mag = np.array([LSST_sig(mag) for mag in rmags])
     noises_ppm = (1 - 10**(-noises_mag/2.5)) * 1e6
 
     # Simulate light curves
     print("Simulating light curves...")
     path = "simulations/sin"  # where to save the lcs
-    [simulate_sin(i, b, pers[i], amps[i], path, noises_ppm[i]) for i in
+    fname = "l45b{0}_{1}_cadence.txt".format(b, band)
+    [simulate_sin(fname, i, b, pers[i], amps[i], path, noises_ppm[i]) for i in
      range(len(pers))]
 
     print("Saving results")
     data = np.vstack((pers, amps, rmags, noises_ppm))
     np.savetxt("sin_parameters_{0}.txt".format(fname), data.T)
-    return pers, amps, rmags, noises_ppm
+    return noises_ppm
 
 if __name__ == "__main__":
-    fname = "sin_b{0}".format(sys.argv[1])
+    b = sys.argv[1]
+    fname = "sin_b{0}".format(b)
 
-#     # Run simulations
-    N = 30
-    pers, amps, rmags, noises_ppm = inject("{0}".format(fname), N)
+    # Run simulations
+    N = 3
+    pers = np.exp(np.random.uniform(.1, 300, N))
+    amps = np.random.uniform(1e2, 1e5, N)
+    rmags = np.random.uniform(16, 28, N)
+    band = "all"
+    noises_ppm = inject(fname, b, pers, amps, rmags, band)
 
     # # recover periods
     # pers, amps, teffs, rmags, noises_ppm = \

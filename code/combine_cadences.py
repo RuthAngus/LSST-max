@@ -15,7 +15,7 @@ def collate(b):
     inds = np.argsort(t)
     t, d = t[inds], d[inds]
     data = np.vstack((t, d))
-    np.savetxt("b{0}_cadence.txt".format(b), data.T)
+    np.savetxt("l45b{0}_cadence.txt".format(b), data.T)
 
 if __name__ == "__main__":
 

@@ -5,10 +5,10 @@ import scipy.signal as sps
 
 def window(b):
 
-    time, depth = np.genfromtxt("b{0}_cadence.txt".format(b)).T
+    time, depth = np.genfromtxt("data/l45b{0}_cadence.txt".format(b)).T
     ps = np.linspace(.1, 100, 1000)
     fs = 1./ps
-    ys = np.zeros_like(time) + 1e-20*np.sin(time*2*np.pi*1e-20)
+    ys = np.ones_like(time)
     normval = time.shape[0]
     pgram = sps.lombscargle(time, ys, 2*np.pi*fs)
     return ps, pgram, normval, time, depth
