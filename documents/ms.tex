@@ -1,4 +1,5 @@
 \documentclass[useAMS, usenatbib, preprint, 12pt]{aastex}
+\usepackage{url}
 \usepackage{cite, natbib}
 \usepackage{float}
 \usepackage{epsfig}
@@ -23,44 +24,39 @@
 \newcommand{\lsst}{{\it LSST}}
 \newcommand{\TESS}{{\it TESS}}
 \newcommand{\tess}{{\it TESS}}
+\newcommand{\SDSS}{{\it SDSS}}
+\newcommand{\sdss}{{\it SDSS}}
+\newcommand{\TRILEGAL}{{\it TRILEGAL}}
+\newcommand{\trilegal}{{\it TRILEGAL}}
+\newcommand{\ie}{{\it i.e.}}
+\newcommand{\logg}{$\log g$}
+\newcommand{\teff}{$T_{\mathrm{eff}}$}
 
 \begin{document}
 
-\title{Stellar Rotation period recovery with LSST}
+\title{Exploring the potential for stellar rotation period inference with
+LSST}
 
 \author{%
-   Ruth Angus\altaffilmark{\oxford, \CU}
-   Suzanne Hawley\altaffilmark{\UW}
-   Jim Davenport\altaffilmark{\WW}
-   Derek Buzasi\altaffilmark{\WW}
-   S{\o}ren Meibom\altaffilmark{\cfa}
-   Suzanne Aigrain\altaffilmark{\oxford}
-   Jonathan Sick\altaffilmark{\noao}
+   Ruth Angus,\altaffilmark{\oxford, \CU}
+   Suzanne Hawley,\altaffilmark{\UW}
+   Jim Davenport,\altaffilmark{\WW}
+   Derek Buzasi,\altaffilmark{\WW}
+   Suzanne Aigrain,\altaffilmark{\oxford}
+   S{\o}ren Meibom,\altaffilmark{\cfa}
    Mark Giampapa\altaffilmark{\cfa}
-   Vinay Kashyap\altaffilmark{\cfa}
+   Jonathan Sick,\altaffilmark{\noao}
    \&
+   Vinay Kashyap\altaffilmark{\cfa}
 }
 
-\altaffiltext{\oxford}{Subdepartment of Astrophysics, University of Oxford, OX1 3RH, UK, ruthangus@gmail.com}
-\altaffiltext{\cfa}{Harvard-Smithsonian Center for Astrophysics, 60 Garden St.,
-Cambridge, MA, USA}
+\altaffiltext{\oxford}{Subdepartment of Astrophysics, University of Oxford,
+              OX1 3RH, UK, ruthangus@gmail.com}
+\altaffiltext{\cfa}{Harvard-Smithsonian Center for Astrophysics, 60 Garden
+              St., Cambridge, MA, USA}
 
 \begin{abstract}
 
-
-\chapter{LSST}
-\label{chapter:future}
-
-The following project was motivated by a call for community input on the
-optical and infrared follow-up requirements for stellar rotation and magnetism
-studies with \LSST.
-I present some of the initial findings of this project here and intend to
-continue to develop this project in future.
-This work was undertaken in collaboration with others, however most of the
-analysis was performed by myself.
-Exceptions are clearly indicated.
-
-\begin{abstract}
 The Large Synoptic Survey Telescope (\LSST) will provide sparse but precise
 ground-based photometry for billions of cool dwarfs in clusters and the field.
 We explore the potential of \LSST\ for large-scale rotation period measurement
@@ -93,7 +89,7 @@ as well as their smaller apparent magnitudes.
 
 \end{abstract}
 
-\subsection{Introduction}
+\section{Introduction}
 
 The Large Synoptic Survey Satellite (\LSST) is a 8.4 metre telescope with a
 9.6 square degree field of view in Cerro Pach\'{o}n, Chile, currently under
@@ -145,7 +141,7 @@ detectable.
 In what follows we describe our \LSST-like, simulated data-set and our
 rotation period recovery pipeline.
 
-\subsection{Simulations}
+\section{Simulations}
 We developed a simple \LSST\ cadence model for our simulations\footnote{In
 future we intend to use the \LSST\ operations simulator
 \citep[OpSim][]{Ridgway2012} to generate a more realistic cadence pattern for
@@ -163,12 +159,11 @@ available at \url{https://github.com/jradavenport/MW-Flare}.
 \begin{figure}
 \begin{center}
 \includegraphics[width=6in, clip=true]{figures/cadence_hist}
-\caption[An \LSST\ cadence histogram.]
-{A histogram of the number of visits per week as a function of time
+\caption{A histogram of the number of visits per week as a function of time
 for a given object or field observed by \LSST\, as used in our simulations.
 Each object is observed only during the day and for half a year at a time.
 The code used to generate this plot was written by J. Davenport,
-\url{https://github.com/jradavenport/MW-Flare}.}
+\protect\url{https://github.com/jradavenport/MW-Flare}.}
 \label{fig:cadence_hist}
 \end{center}
 \end{figure}
@@ -586,5 +581,5 @@ becomes available.}
 \end{itemize}
 
 \bibliographystyle{plainnat}
-\bibliography{k2rotation}
+\bibliography{LSST.bib}
 \end{document}
