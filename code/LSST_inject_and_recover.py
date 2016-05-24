@@ -183,7 +183,7 @@ if __name__ == "__main__":
     fname = "l45b{0}".format(sys.argv[1])
 
 #     # Run simlations
-    N = 30
+    N = 1000
     pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
 
     # # recover periods
