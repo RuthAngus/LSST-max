@@ -5,22 +5,24 @@ import h5py
 import os
 import sys
 
-def compare_pgram(true_p_file, ids, fname, yr):
+def compare_pgram(fname, yr):
 
     # load recovered
-    recovered_periods, true_periods = [np.zeros_like(ids) for i in range(2)]
     errs, true_amps = [np.zeros_like(ids) for i in range(2)]
+    true_periods, true_amps = \
+            np.genfromtxt("simulations/{0}/all_truths.txt".format(fname)).T
+    ids = range(len(true_periods))
+    recovered_periods, true_periods = [np.zeros_like(len(ids)) for i in
+                                       range(2)]
     for i in range(len(ids)):
         id = str(int(ids[i])).zfill(4)
         pfile = "results/{0}/{1}_{2}yr_result.txt".format(fname, id, yr)
         if os.path.exists(pfile):
             recovered_periods[i] = np.genfromtxt(pfile).T
-            true_periods[i], true_amps[i] = \
-                    np.genfromtxt("simulations/{0}/{1}_truth.txt".format(fname,
-                                  id)).T
         else: true_periods[i], true_amps[i] = 0, 0
 
     plt.clf()
+    print(len(true_periods), len(recovered_periods))
     plt.plot(true_periods, recovered_periods, "k.")
     xs = np.linspace(min(true_periods), max(true_periods), 100)
     plt.plot(xs, xs, "r--")
@@ -60,9 +62,8 @@ if __name__ == "__main__":
     ids, true_periods, amps = \
             np.genfromtxt("simulations/{0}/truth.txt".format(fname),
                           skip_header=1).T
-    N = 20000
     ids = range(N)
     years = [1, 5, 10]
     for yr in years:
         print("year", yr)
-        compare_pgram(true_periods[:N], ids[:N], fname, yr)
+        compare_pgram(fname, yr)
