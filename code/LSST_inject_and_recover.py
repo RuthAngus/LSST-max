@@ -188,9 +188,9 @@ def inject(fname, N):
 if __name__ == "__main__":
     fname = "l45b{0}".format(sys.argv[1])
 
-#     print("Simulating light curves...")
-#     N = 200
-#     pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
+    print("Simulating light curves...")
+    N = 20000
+    pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
 
     print("Recovering periods...")
     pers, amps, teffs, rmags, noises_ppm = \
