@@ -24,6 +24,7 @@ def simulate_LSST(id, p, a, path, noise, tmin=3, tmax=30, dur=10, plot=False):
     dur: duration in years.
     noise: noise level (ppm). Default is 10 ppm.
     """
+    print(id)
     id = str(int(id)).zfill(4)
 
 #     # only make new simulation if one doesn't already exist

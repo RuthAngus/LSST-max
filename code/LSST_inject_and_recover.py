@@ -1,5 +1,7 @@
 # coding: utf-8
 # # Recovering rotation periods in simulated LSST data
+# before you run this, remove the files: simulations/l45b-{0}/all_truths.txt &
+# results/l45b-{0}_{1}yr_results.txt".format(b, yr)
 
 from __future__ import print_function
 import numpy as np
@@ -7,6 +9,7 @@ import matplotlib.pyplot as plt
 from gatspy.periodic import LombScargle
 from toy_simulator import simulate_LSST
 from trilegal_models import random_stars
+from compare_LSST import compare_pgram
 import simple_gyro as sg
 import pandas as pd
 import sys
@@ -88,9 +91,11 @@ def pgram(N, years, fname):
             period = 0
 
         periods[i] = period
-        np.savetxt("results/{0}/{1}_{2}yr_result.txt".format(fname, sid,
-                   years), [period])
-    np.savetxt("{0}_{1}yr_results.txt".format(fname, years), periods.T)
+
+    data = np.vstack((ids, periods))
+    f = open("results/{0}_{1}yr_results.txt".format(fname, years), "a")
+    np.savetxt(f, data.T)
+    f.close()
     return periods
 
 def inject(fname, N):
@@ -166,6 +171,7 @@ def inject(fname, N):
     # Simulate light curves
     print("Simulating light curves...")
     path = "simulations/{0}".format(fname)  # where to save the lcs
+    print(len(pers), "stars to simulate")
     [simulate_LSST(i, pers[i], amps[i], path, noises_ppm[i]) for i in
      range(len(pers))]
 
@@ -182,11 +188,11 @@ def inject(fname, N):
 if __name__ == "__main__":
     fname = "l45b{0}".format(sys.argv[1])
 
-    # Run simlations
-#     N = 1000
+#     print("Simulating light curves...")
+#     N = 200
 #     pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
 
-    # Recover periods
+    print("Recovering periods...")
     pers, amps, teffs, rmags, noises_ppm = \
             np.genfromtxt("parameters_{0}.txt".format(fname)).T
     N = len(pers)
@@ -195,4 +201,5 @@ if __name__ == "__main__":
         periods = pgram(N, year, fname)
         data = np.vstack((pers, periods, np.log(amps), teffs, rmags, amps,
                           noises_ppm))
-        np.savetxt("{0}yr_results{1}.txt".format(year, fname), data.T)
+        np.savetxt("results/{0}yr_results{1}.txt".format(year, fname), data.T)
+        compare_pgram(fname, year)
