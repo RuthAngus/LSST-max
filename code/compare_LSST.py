@@ -17,7 +17,7 @@ def compare_pgram(fname, yr):
     plt.plot(true_periods, recovered_periods, "k.")
     xs = np.linspace(min(true_periods), max(true_periods), 100)
     plt.plot(xs, xs, "r--")
-    plt.savefig("pgram_compare_{0}_{1}yr".format(fname, yr))
+    plt.savefig("results/pgram_compare_{0}_{1}yr".format(fname, yr))
 
 def compare_GP(true_periods, ids, path):
 

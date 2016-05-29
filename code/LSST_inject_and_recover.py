@@ -182,7 +182,7 @@ def inject(fname, N):
 
     print("Saving results")
     data = np.vstack((pers, amps, teffs, rmags, noises_ppm))
-    np.savetxt("parameters_{0}.txt".format(fname), data.T)
+    np.savetxt("results/parameters_{0}.txt".format(fname), data.T)
     return pers, amps, teffs, rmags, noises_ppm
 
 if __name__ == "__main__":
