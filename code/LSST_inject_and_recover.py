@@ -5,14 +5,18 @@
 
 from __future__ import print_function
 import numpy as np
-import matplotlib.pyplot as plt
+# import matplotlib.pyplot as plt
+import pandas as pd
+
+import sys
+import os
+
 from gatspy.periodic import LombScargle
+
 from toy_simulator import simulate_LSST
 from trilegal_models import random_stars
 from compare_LSST import compare_pgram
 import simple_gyro as sg
-import pandas as pd
-import sys
 
 
 def find_nearest(array, value):
@@ -31,7 +35,7 @@ def assign_amps(ps, log10P, log10R, stdR):
     Take periods and bin values and return an array of amplitudes.
     """
     npi = np.array([find_nearest(10**log10P, p) for p in ps])
-    nearest_ps, inds = npi[:, 0], npi[:, 1]
+    inds = npi[:, 1]
     log_ranges = np.array([log10R[i] for i in inds])[:, 0]
     std_ranges = np.array([stdR[i] for i in inds])[:, 0]
     return np.random.randn(len(ps))*std_ranges + log_ranges
@@ -66,6 +70,7 @@ def LSST_sig(m):
     sigs = np.array([.005, .007, .01, .02, .03, .1, .2])
     return sigs[np.abs(mags - m) == np.abs(mags-m).min()][0]
 
+
 def pgram(N, years, fname):
     ps = np.linspace(2, 100, 1000)  # the period array (in days)
 
@@ -83,8 +88,8 @@ def pgram(N, years, fname):
         pgram = model.periodogram(ps)
 
         # find peaks
-        peaks = np.array([j for  j in range(1, len(ps)-1) if pgram[j-1]
-                          < pgram[j] and pgram[j+1] < pgram[j]])
+        peaks = np.array([j for j in range(1, len(ps)-1) if pgram[j-1] <
+                          pgram[j] and pgram[j+1] < pgram[j]])
         if len(peaks):
             period = ps[pgram == max(pgram[peaks])][0]
         else:
@@ -98,7 +103,8 @@ def pgram(N, years, fname):
     f.close()
     return periods
 
-def inject(fname, N):
+
+def inject(fname, N, DATA_DIR="data", SIM_DIR="simulations"):
     """
     Simulate rotation periods for LSST targets and attempt to recover those
     rotation periods.
@@ -140,7 +146,7 @@ def inject(fname, N):
     hot_ps[tot:] = np.random.randn(len(hot_ps)-tot)*sig2 + mu2
 
     # combine the modes
-    age = np.concatenate((cool_ages, hot_ages))
+    # age = np.concatenate((cool_ages, hot_ages))
     ps = np.concatenate((cool_ps, hot_ps))
     teff = np.concatenate((cool_teffs, hot_teffs))
     rmag = np.concatenate((cool_rmags, hot_rmags))
@@ -148,12 +154,12 @@ def inject(fname, N):
     print("Calculating amplitudes...")
     # Use Derek's results to calculate amplitudes
     # Column headings: log10P, log10R, stdR, Nbin
-    d35 = pd.read_csv("data/rot_v_act3500.txt")
-    d40 = pd.read_csv("data/rot_v_act4000.txt")
-    d45 = pd.read_csv("data/rot_v_act4500.txt")
-    d50 = pd.read_csv("data/rot_v_act5000.txt")
-    d55 = pd.read_csv("data/rot_v_act5500.txt")
-    d60 = pd.read_csv("data/rot_v_act6000.txt")
+    d35 = pd.read_csv(os.path.join(DATA_DIR, "rot_v_act3500.txt"))
+    d40 = pd.read_csv(os.path.join(DATA_DIR, "rot_v_act4000.txt"))
+    d45 = pd.read_csv(os.path.join(DATA_DIR, "rot_v_act4500.txt"))
+    d50 = pd.read_csv(os.path.join(DATA_DIR, "rot_v_act5000.txt"))
+    d55 = pd.read_csv(os.path.join(DATA_DIR, "rot_v_act5500.txt"))
+    d60 = pd.read_csv(os.path.join(DATA_DIR, "rot_v_act6000.txt"))
 
     # Assign amplitudes
     pers, logamps, teffs, rmags = \
@@ -170,7 +176,9 @@ def inject(fname, N):
 
     # Simulate light curves
     print("Simulating light curves...")
-    path = "simulations/{0}".format(fname)  # where to save the lcs
+    if not os.path.exists(fname):
+        os.makedirs(fname)
+    path = os.path.join(SIM_DIR, "{0}".format(fname))  # where to save the lcs
     print(len(pers), "stars to simulate")
     [simulate_LSST(i, pers[i], amps[i], path, noises_ppm[i]) for i in
      range(len(pers))]
@@ -178,15 +186,16 @@ def inject(fname, N):
     # save the true values
     ids = np.arange(len(pers))
     data = np.vstack((ids, pers, amps))
-    np.savetxt("{0}/truth.txt".format(path), data.T)
+    np.savetxt(os.path.join(path, "truth.txt", data.T))
 
     print("Saving results")
     data = np.vstack((pers, amps, teffs, rmags, noises_ppm))
     np.savetxt("results/parameters_{0}.txt".format(fname), data.T)
     return pers, amps, teffs, rmags, noises_ppm
 
+
 if __name__ == "__main__":
-    fname = "l45b{0}".format(sys.argv[1])
+    fname = "l{0}b{1}".format(sys.argv[1], sys.argv[2])
 
     print("Simulating light curves...")
     N = 20000
@@ -194,12 +203,13 @@ if __name__ == "__main__":
 
     print("Recovering periods...")
     pers, amps, teffs, rmags, noises_ppm = \
-            np.genfromtxt("parameters_{0}.txt".format(fname)).T
+        np.genfromtxt("parameters_{0}.txt".format(fname)).T
     N = len(pers)
     years = [1, 5, 10]
     for year in years:
         periods = pgram(N, year, fname)
         data = np.vstack((pers, periods, np.log(amps), teffs, rmags, amps,
                           noises_ppm))
-        np.savetxt("results/{0}yr_results{1}.txt".format(year, fname), data.T)
+        np.savetxt("results/{0}yr_results{1}.txt".format(year, fname),
+                   data.T)
         compare_pgram(fname, year)

@@ -4,12 +4,18 @@ from plotstuff import colours
 cols = colours()
 
 plotpar = {'axes.labelsize': 16,
-            'xtick.labelsize': 16,
-            'ytick.labelsize': 16,
-            'text.usetex': True}
+           'xtick.labelsize': 16,
+           'ytick.labelsize': 16,
+           'text.usetex': True}
 plt.rcParams.update(plotpar)
 
+
 def make_plot(data, b):
+    """
+    Scatter plots of recovered period vs injected periods, coloured by
+    r-magnitude, teff and amplitude.
+    """
+
     pers, periods, log_amps, teffs, rmags, amps, noises_ppm = data
 
     xs = np.linspace(0, max(pers))
@@ -47,18 +53,23 @@ def make_plot(data, b):
     plt.ylim(0, max(periods))
     plt.savefig("pvp_a_{0}.pdf".format(b))
 
+
 def recovered(data, f):
     """
     Take all data and return just the successfully recovered stuff
+    data: 2d array of pers, periods, log_amps, teffs, rmags, amps, noises_ppm
+    f: tolerance, e.g. 0.1.
+    Returns 2d array of just successfully recovered stars.
     """
     pers, periods, log_amps, teffs, rmags, amps, noises_ppm = data
     m = (periods < pers + f*pers) * (pers - f*pers < periods)
     return np.vstack((pers[m], periods[m], log_amps[m], teffs[m], rmags[m],
                       amps[m], noises_ppm[m]))
 
+
 def find_fraction(X, X_r, bins):
     # Fraction recovered as a function of X
-    if bins == None:
+    if bins is None:
         true_hist, bins = np.histogram(X)
         measured_hist, _ = np.histogram(X_r, bins)
     else:
@@ -68,6 +79,7 @@ def find_fraction(X, X_r, bins):
     mh = np.array([float(i) for i in measured_hist])
     return mh/th*100, bins  # percent
 
+
 def percents(X, X_r, teffs, teffs_r):
     # total --- all stars
     percent, bins = find_fraction(X, X_r, None)
@@ -75,14 +87,15 @@ def percents(X, X_r, teffs, teffs_r):
     # now for different temperatures
     mf = lambda Xmin, Xmax, t: (Xmin < t) * (t < Xmax)
     Gm, Km, Mm, Fm = mf(Gmin, Gmax, teffs), mf(Kmin, Kmax, teffs), \
-                 mf(Mmin, Mmax, teffs), mf(Fmin, Fmax, teffs)
+        mf(Mmin, Mmax, teffs), mf(Fmin, Fmax, teffs)
     Gmr, Kmr, Mmr, Fmr = mf(Gmin, Gmax, teffs_r), mf(Kmin, Kmax, teffs_r), \
-                 mf(Mmin, Mmax, teffs_r), mf(Fmin, Fmax, teffs_r)
+        mf(Mmin, Mmax, teffs_r), mf(Fmin, Fmax, teffs_r)
     Gpercent, Gbins = find_fraction(X[Gm], X_r[Gmr], bins)
     Kpercent, Kbins = find_fraction(X[Km], X_r[Kmr], bins)
     Mpercent, Mbins = find_fraction(X[Mm], X_r[Mmr], bins)
     Fpercent, Fbins = find_fraction(X[Fm], X_r[Fmr], bins)
     return Gpercent, Kpercent, Mpercent, Fpercent, bins
+
 
 def summary_plot(data, b, f):
     """
@@ -99,14 +112,13 @@ def summary_plot(data, b, f):
     pers_r, periods_r, log_amps_r, teffs_r, rmags_r, amps_r, noises_ppm_r = \
         recovered(data, f)
     print("\n", len(pers), "injected", len(pers_r),
-          "recovered, {0:.2f}%".format(float(len(pers_r))/
+          "recovered, {0:.2f}%".format(float(len(pers_r)) /
                                        float(len(pers))*100), "\n")
 
     # Calculate the percentage recovery as a function of period for the
     # different spectral types
     Gpercent, Kpercent, Mpercent, Fpercent, bins = percents(pers, pers_r,
                                                             teffs, teffs_r)
-
 
     Gfrac, Kfrac, Mfrac = 0.2426, 0.5429, 0.8339
     # Gfrac, Kfrac, Mfrac = 1, 1, 1
@@ -126,6 +138,7 @@ def summary_plot(data, b, f):
     plt.ylim(0, 100)
     plt.legend(loc="best")
     plt.savefig("recovered_hist_{0}.pdf".format(b))
+
 
 def trilegal(data, b):
     """
@@ -148,10 +161,52 @@ def trilegal(data, b):
 
     plt.clf()
     m = (teffs < 7000) * (2000 < teffs) * pers > 0
-    plt.hist(pers[m], color="w", histtype="stepfilled")
+    bins = plt.hist(pers[m], 10, color="w", histtype="stepfilled")[1]
+    phist = np.histogram(pers[m], bins=bins)[0]
+    plt.hist(pers[m], bins=bins, color="w", histtype="stepfilled")
+    rec = recovered(data, .1)
+    l = (rec[3] < 7000) * (2000 < rec[3]) * rec[0] > 0
+    plt.hist(rec[0][l], bins=bins, color="w", edgecolor="CornFlowerBlue",
+             histtype="stepfilled", lw=2)
     plt.xlabel("$\mathrm{Injected~Rotation~Period~(Days)}$")
     plt.ylabel("$\mathrm{Number~out~of~20,0000}$")
     plt.savefig("trilegal_period_hist{0}.pdf".format(b))
+
+    # make fraction recovered histogram
+    nbins = 10
+    m = (teffs < 7000) * (2000 < teffs) * pers > 0
+    rec = recovered(data, .1)
+    l = (rec[3] < 7000) * (2000 < rec[3]) * rec[0] > 0
+
+    # make histograms
+    inj, ibins = np.histogram(pers[m], nbins)
+    reco, rbins = np.histogram(rec[0][l], bins=ibins)
+    frac = np.zeros(len(ibins))
+    frac[:-1] = reco/inj
+    kepler_frac = 0.328
+    plt.clf()
+    plt.step(ibins, frac*kepler_frac, color="CornFlowerBlue", lw=2)
+    # plt.xlim(0, 70)
+    # plt.ylim(0, 1)
+    plt.xlabel("$\mathrm{Injected~Rotation~Period~(Days)}$")
+    plt.ylabel("$\mathrm{Fraction~Recovered}$")
+
+    # load Amy's data
+    data = np.genfromtxt("Table_1_Periodic.txt", skip_header=1,
+                         delimiter=",").T
+    m = (2000 < data[1]) * (data[1] < 7000)
+    amy_p = data[4][m]
+    amy, abins = np.histogram(amy_p, bins=ibins)
+    amy_tot = 103693. / nbins
+    # plt.step(ibins[:-1], amy*(phist/float(max(phist))), "k")
+    # plt.step(ibins[:-1], amy/amy_tot/phist, "k")
+    phist = np.array([float(i) for i in phist])
+    print(amy, phist/float(max(phist)))
+    # plt.step(ibins[:-1], amy*phist, "k")
+    # plt.step(bins[:-1], phist/float(max(phist)), "r")
+    # plt.step(ibins[:-1], amy/amy_tot * phist/float(max(phist)), "k")
+    plt.ylim(0, .5)
+    plt.savefig("trilegal_fraction_amy_hist{0}.pdf".format(b))
 
 
 if __name__ == "__main__":
@@ -165,12 +220,12 @@ if __name__ == "__main__":
     b = -10
 
     # load data file
-    data = np.genfromtxt("{0}yr_resultsl45b{1}.txt".format(yr, b)).T
-    m = data[0] > 0
-    data2 = np.vstack((data[0][m], data[1][m], data[2][m], data[3][m],
-                       data[4][m], data[5][m], data[6][m]))
+    d = np.genfromtxt("results/{0}yr_resultsl45b{1}.txt".format(yr, b)).T
+    m = d[0] > 0  # remove negative injected periods
+    data = np.vstack((d[0][m], d[1][m], d[2][m], d[3][m], d[4][m], d[5][m],
+                      d[6][m]))
 
     # make the plots
-    summary_plot(data2, b, .1)
+    # summary_plot(data, b, .1)
     # make_plot(data, b)
-    # trilegal(data, b)
+    trilegal(data, b)
