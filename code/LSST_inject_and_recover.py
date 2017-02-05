@@ -72,6 +72,9 @@ def LSST_sig(m):
 
 
 def pgram(N, years, fname):
+    """
+    Calculate periodograms of LSST light curves.
+    """
     ps = np.linspace(2, 100, 1000)  # the period array (in days)
 
     print("Computing periodograms")
@@ -178,10 +181,17 @@ def inject(fname, N, DATA_DIR="data", SIM_DIR="simulations"):
     print("Simulating light curves...")
     if not os.path.exists(fname):
         os.makedirs(fname)
+
+    # only make new simulation if one doesn't already exist
+    if os.path.exists("simulations/{0}".format(i)):
+        return
+
     path = os.path.join(SIM_DIR, "{0}".format(fname))  # where to save the lcs
+    x, depth = np.genfromtxt("{0}_cadence.txt".format(path)).T
+
     print(len(pers), "stars to simulate")
-    [simulate_LSST(i, pers[i], amps[i], path, noises_ppm[i]) for i in
-     range(len(pers))]
+    [simulate_LSST(x, depth, i, pers[i], amps[i], path, noises_ppm[i]) for i
+     in range(len(pers))]
 
     # save the true values
     ids = np.arange(len(pers))

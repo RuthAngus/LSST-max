@@ -12,7 +12,8 @@ plotpar = {'axes.labelsize': 20,
             'text.usetex': True}
 plt.rcParams.update(plotpar)
 
-def simulate_LSST(id, p, a, path, noise, tmin=3, tmax=30, dur=10, plot=False):
+def simulate_LSST(x, depth, id, p, a, path, noise, tmin=3, tmax=30, dur=10,
+                  plot=False):
     """ Photometry with precision of 10 ppm (?).
     Uneven time sampling that ranges (uniformily) from 3 to 30 days (?).
     Lasting 10 years (?).
@@ -27,26 +28,16 @@ def simulate_LSST(id, p, a, path, noise, tmin=3, tmax=30, dur=10, plot=False):
     print(id)
     id = str(int(id)).zfill(4)
 
-#     # only make new simulation if one doesn't already exist
-#     if os.path.exists("simulations/{0}".format(id)):
-#         return
-
-    # The time array
-#     x = np.cumsum(np.random.uniform(tmin, tmax, 1000))
-#     x = x[x < dur * 365.25]
-#     x = generate_visits()
-#     x += -x[0]
-    x, depth = np.genfromtxt("{0}_cadence.txt".format(path)).T
-
-#     sin2incl = np.random.uniform(np.sin(0)**2, np.sin(np.pi/2)**2)
-#     incl = np.arcsin(sin2incl**.5)
-#     tau = np.exp(np.random.uniform(np.log(p), np.log(10*p)))
-#     res0, res1 = mklc.mklc(x, incl=incl, tau=tau, p=p)
-    res0, res1 = mklc.mklc(x, p=p)
+    sin2incl = np.random.uniform(np.sin(0)**2, np.sin(np.pi/2)**2)
+    incl = np.arcsin(sin2incl**.5)
+    tau = np.exp(np.random.uniform(np.log(p), np.log(10*p)))
+    res0, res1 = mklc.mklc(x, incl=incl, tau=tau, p=p)
+    # res0, res1 = mklc.mklc(x, p=p)
     nspot, ff, amp_err = res0
     time, area_tot, dF_tot, dF_tot0 = res1
     noise_free_y = dF_tot0 / np.median(dF_tot0) - 1
-    y = dF_tot0 / np.median(dF_tot0) - 1 + noise*1e-6 * np.random.randn(len(x))
+    y = dF_tot0 / np.median(dF_tot0) - 1 + noise*1e-6 * \
+        np.random.randn(len(x))
     yerr = np.ones_like(y) * noise * 1e-6
 
     data = np.vstack((x, y, yerr))
