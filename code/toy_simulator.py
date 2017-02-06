@@ -12,8 +12,8 @@ plotpar = {'axes.labelsize': 20,
             'text.usetex': True}
 plt.rcParams.update(plotpar)
 
-def simulate_LSST(x, depth, id, p, a, path, noise, tmin=3, tmax=30, dur=10,
-                  plot=False):
+def simulate_LSST(x, depth, filt, id, p, a, path, noise, tmin=3, tmax=30,
+                  dur=10, plot=False):
     """ Photometry with precision of 10 ppm (?).
     Uneven time sampling that ranges (uniformily) from 3 to 30 days (?).
     Lasting 10 years (?).
@@ -38,25 +38,43 @@ def simulate_LSST(x, depth, id, p, a, path, noise, tmin=3, tmax=30, dur=10,
     noise_free_y = dF_tot0 / np.median(dF_tot0) - 1
     y = dF_tot0 / np.median(dF_tot0) - 1 + noise*1e-6 * \
         np.random.randn(len(x))
-    yerr = np.ones_like(y) * noise * 1e-6
+    yerr = np.ones(len(y)) * noise * 1e-6
 
     data = np.vstack((x, y, yerr))
     np.savetxt("{0}/{1}.txt".format(path, id), data.T)
-    truths = np.array([p, a])
-    truths = np.vstack((np.array([p]), np.array([a])))
+    # truths = np.array([p, a])
+    # truths = np.vstack((np.array([p]), np.array([a])))
+    # np.savetxt(f, truths.T)
     f = open("{0}/all_truths.txt".format(path), "a")
-    np.savetxt(f, truths.T)
+    f.write("{0} {1}\n".format(p, a))
     f.close()
 
     if plot:
+        u = filt == "u"
+        g = filt == "g"
+        r = filt == "r"
+        i = filt == "i"
+        z = filt == "z"
+        y = filt == "y"
         print("plotting light curve")
         plt.clf()
-        plt.errorbar(x/365.25, y, yerr=yerr, fmt="k.", capsize=0, ecolor=".5")
+        plt.errorbar(x[u]/365.25, y[u], yerr=yerr[u], fmt=".", capsize=0,
+                     ecolor=".5", color="b", label="u")
+        plt.errorbar(x[g]/365.25, y[g], yerr=yerr[g], fmt=".", capsize=0,
+                     ecolor=".5", color="g", label="g")
+        plt.errorbar(x[r]/365.25, y[r], yerr=yerr[r], fmt=".", capsize=0,
+                     ecolor=".5", color="r", label="r")
+        plt.errorbar(x[i]/365.25, y[i], yerr=yerr[i], fmt=".", capsize=0,
+                     ecolor=".5", color="m", label="i")
+        plt.errorbar(x[z]/365.25, y[z], yerr=yerr[z], fmt=".", capsize=0,
+                     ecolor=".5", color="y", label="z")
+        plt.errorbar(x[y]/365.25, y[y], yerr=yerr[y], fmt=".", capsize=0,
+                     ecolor=".5", color="k", label="y")
         plt.xlabel("$\mathrm{Time~(years)}$")
         plt.ylabel("$\mathrm{Normalised~Flux}$")
         plt.xlim(min(x/365.25), max(x/365.25))
         plt.subplots_adjust(left=.2, bottom=.12)
-        plt.savefig("{0}/{1}.pdf".format(path, id))
+        plt.savefig(os.path.join(path, "{}".format(id)))
 
 if __name__ == "__main__":
     path = "simulations"  # where to save

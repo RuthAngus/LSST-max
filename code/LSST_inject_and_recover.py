@@ -107,13 +107,19 @@ def pgram(N, years, fname):
     return periods
 
 
-def inject(fname, N, DATA_DIR="data", SIM_DIR="simulations"):
+def inject(fname, N):
     """
     Simulate rotation periods for LSST targets and attempt to recover those
     rotation periods.
     Saves an array of injected periods (days), recovered periods (days), Teff,
     rmag, injected amplitudes (ppm) and noise (ppm).
     'true_ps, periods, logamps, teffs, rmags, true_as, noises_ppm'
+    params:
+    ------
+    fname: (str)
+        The coordinates of the field, e.g. "l45b-10".
+    N: (int)
+        The number of simulations.
     """
 
     print("Loading TRILEGAL output file...")
@@ -182,16 +188,26 @@ def inject(fname, N, DATA_DIR="data", SIM_DIR="simulations"):
     if not os.path.exists(fname):
         os.makedirs(fname)
 
-    # only make new simulation if one doesn't already exist
-    if os.path.exists("simulations/{0}".format(i)):
-        return
-
-    path = os.path.join(SIM_DIR, "{0}".format(fname))  # where to save the lcs
-    x, depth = np.genfromtxt("{0}_cadence.txt".format(path)).T
+    filters = ["u", "g", "r", "i", "z"]
+    x, depth, filt = [], [], []
+    for f in filters:
+        path = os.path.join(DATA_DIR,
+                            "{0}_{1}_cadence.txt".format(fname, f))
+        xf, depthf = np.genfromtxt(path).T
+        x.append(xf)
+        depth.append(depthf)
+        fs = np.zeros(len(xf), dtype="str")
+        for i, _ in enumerate(fs):
+            fs[i] = f
+        filt.append(fs)
+    array = lambda arr: np.array([i for j in arr for i in j])
+    x, depth, filt = array(x), array(depth), array(filt)
+    inds = np.argsort(x)
+    x, depth, filt = x[inds], depth[inds], filt[inds]
 
     print(len(pers), "stars to simulate")
-    [simulate_LSST(x, depth, i, pers[i], amps[i], path, noises_ppm[i]) for i
-     in range(len(pers))]
+    [simulate_LSST(x, depth, filt, i, pers[i], amps[i], SIM_DIR,
+                   noises_ppm[i], plot=True) for i in range(len(pers))]
 
     # save the true values
     ids = np.arange(len(pers))
@@ -200,15 +216,20 @@ def inject(fname, N, DATA_DIR="data", SIM_DIR="simulations"):
 
     print("Saving results")
     data = np.vstack((pers, amps, teffs, rmags, noises_ppm))
-    np.savetxt("results/parameters_{0}.txt".format(fname), data.T)
+    np.savetxt(os.path.join(RESULTS_DIR, "parameters_{0}.txt".format(fname),
+                            data.T))
     return pers, amps, teffs, rmags, noises_ppm
 
 
 if __name__ == "__main__":
+    path = "/Users/ruthangus/projects/LSST-max/code/"
+    DATA_DIR = os.path.join(path, "data")
+    RESULTS_DIR = os.path.join(path, "results")
+    SIM_DIR = os.path.join(path, "simulations")
     fname = "l{0}b{1}".format(sys.argv[1], sys.argv[2])
 
     print("Simulating light curves...")
-    N = 20000
+    N = 2000
     pers, amps, teffs, rmags, noises_ppm = inject("{0}".format(fname), N)
 
     print("Recovering periods...")
